@@ -9,7 +9,11 @@ See [BBQr.md](BBQr.md).
 
 # Example Code
 
-See [example code](bbqr/coding.py)
+- [spliting / joining QRs](bbqr/coding.py)
+
+- [binary to internal encoding](bbqr/coding.py)
+
+- [wrapper CLI](bbqr/cli.py)
 
 
 # License
