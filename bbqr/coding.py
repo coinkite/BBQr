@@ -16,11 +16,12 @@ from base64 import b32encode, b32decode
 from .utils import version_to_chars, encode_data, decode_data
 from .consts import HEADER_LEN, KNOWN_FILETYPES
 
-
 def find_best_version(ll, split_mod, min_split=1, max_split=255, min_version=5, max_version=40):
     # ll = length of encoded data to be transmitted (no headers)
-    # v23 = 794 bytes capacity
-    # v27 = 1066 bytes capacity is a sweet spot w/ 1k+ each
+    # split_mod = required size of non-runt parts so that can be decoded w/o spliting symbols
+    # useful versions:
+    #   v23 = 794 bytes capacity
+    #   v27 = 1066 bytes capacity is a sweet spot w/ 1k+ each
 
     min_version = min(min_version, max_version)     # in case they spec a very low max
 
@@ -34,7 +35,10 @@ def find_best_version(ll, split_mod, min_split=1, max_split=255, min_version=5, 
             # capacity at this size
             cap = version_to_chars(ver) - HEADER_LEN
 
-            per_each = cap          #floor(cap / num_qr)
+            if ll > cap:
+                per_each = floor(ll / num_qr)
+            else:
+                per_each = cap
 
             # need to split along correct boundaries
             # depending on encoding type
@@ -42,7 +46,7 @@ def find_best_version(ll, split_mod, min_split=1, max_split=255, min_version=5, 
                 per_each -= per_each % split_mod
 
             runt_size = ll - (per_each * (num_qr - 1))
-            assert runt_size >= 0
+            #assert runt_size >= 0
 
             if runt_size > cap:
                 # it cannot fit
@@ -61,7 +65,7 @@ def split_qrs(raw, type_code, encoding=None, **kws):
     # can be sent as QR code.
     # - returns text
     # - assumes and requires alnum, L error level
-    # - see find_best_version for additional kw args
+    # - see find_best_version() for additional kw args
 
     assert type_code in KNOWN_FILETYPES, f"invalid type_code: {type_code}"
     if encoding: assert encoding in 'H2Z', f"invalid encoding: {encoding}"
