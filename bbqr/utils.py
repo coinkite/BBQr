@@ -41,7 +41,7 @@ def encode_data(raw, encoding=None):
     # Default: base32 encoding, no padding bytes
     data = b32encode(raw).decode('ascii').rstrip('=')
 
-    return encoding, data, 5
+    return encoding, data, 8
 
 def decode_data(parts, encoding):
     # give back the bytes after decoding
