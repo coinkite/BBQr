@@ -1,0 +1,12 @@
+# These are the "full" requirements. You might not need them all! See setup.py
+# which duplicates this, and has useful subsets.
+
+# for CLI command option parsing
+click>=6.7
+
+# for QR generation
+pyqrcode
+
+Pillow
+
+pytest
