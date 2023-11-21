@@ -7,6 +7,8 @@ click>=6.7
 # for QR generation
 pyqrcode
 
+# images
 Pillow
 
+# testing
 pytest

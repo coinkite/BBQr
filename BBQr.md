@@ -1,4 +1,4 @@
-# The B$ QR Protocol
+# The BBQr Protocol - Make a series of QR codes to hold lots of data
 
 ## Introduction
 
@@ -136,7 +136,7 @@ you can prepend a fixed header: `B$HP0100` or `B$HT0100`
 ### Size Estimates
 
 This is the exact number of bytes that can be encoded into the
-indicated QR version, given 2/5/10 or 20 splits.
+indicated QR version, given 2, 5 or 10 splits.
 
 Vers | Pixels  | Chars | Payload |  2-split |  5-split | 10-split | 20-split
 -----|---------|-------|---------|----------|----------|----------|---------

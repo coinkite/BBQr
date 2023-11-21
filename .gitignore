@@ -1,0 +1,4 @@
+ENV/
+bbqr.egg-info/
+requirements.txt
+__pycache__
