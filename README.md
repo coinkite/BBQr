@@ -9,5 +9,10 @@ See [BBQr.md](BBQr.md).
 
 # Example Code
 
-See [example code](bbqr/__init__.py)
+See [example code](bbqr/coding.py)
+
+
+# License
+
+Public Domain.
 
