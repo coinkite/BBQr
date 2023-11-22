@@ -14,7 +14,7 @@ See [BBQr.md](BBQr.md).
 The above BBQr encodes the entire specification itself (so meta). 
 
 ```
-% bbqr make BBQr.md -v 21 -o example.png --scale 8
+% bbqr make BBQr.md -v 21 -o example.png --scale 3
 Detected file type: U -> Unicode Text
 Need 8 QR's each of version 20.
 Building QR images... done!
