@@ -32,5 +32,5 @@ Created 'example.png' with 8 frames.
 
 # License
 
-Public Domain.
+Public Domain code by [Coinkite](https://coinkite.com)
 
