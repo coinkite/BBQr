@@ -4,3 +4,4 @@ requirements.txt
 __pycache__
 foo.png
 foo*.svg
+.DS_Store

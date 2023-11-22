@@ -41,6 +41,8 @@ def join_qrs(parts):
 
     raw = decode_data(parts, encoding)
 
+    # maybe: decode objects here... U=>text, C=>obj, J=>obj
+
     return file_type, raw
 
 # EOF

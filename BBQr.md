@@ -214,12 +214,12 @@ to add your new types. If you are experimenting, please use "X"
 until your letter is assigned.
 
 Note that J (JSON) and U (unicode) still require the data to be 
-treated as binary and encoded in Hex or Base36.
+treated as binary and encoded in Hex or Base32.
 
 ## Advanced Encodings
 
-The default encoding for the data of the QR's is HEX, and the 3rd character
-in the header selects that format.
+The easier encoding for the data of the QR's is HEX, and the 3rd character
+in the header selects that format if it is `H`.
 
 Using HEX encoding inside alphanumeric encoding of the QR yields
 data transfer rate comparable to the QR code's native binary rate,
@@ -231,15 +231,16 @@ Encoding | Meaning
 ---------|-----------------
   H      | HEX (capitalized hex digits, 4-bits each)
   2      | [Base32](https://en.wikipedia.org/wiki/Base32) using [RFC 4648](https://datatracker.ietf.org/doc/html/rfc4648#section-6) alphabet
-  Z      | Zlib compressed (wbits=10, no header), Base32 data
+  Z      | Zlib compressed (wbits=10, no header) then Base32
  (others)| _All other codes are reserved._
 
 Base32 puts 5.0 bits into 5.5 bits of QR data and is closer to
 optimium in terms of packing.  Just as it is an error to send an
-odd number of hex digits in a QR block, for Base32 you must send
-complete bytes. Padding character **must** be omitted, and the `=`
-character should never be used (and it's not part of the legal alnum
-charset anyway).
+odd number of hex digits in a QR block, for Base32 you **must** send
+complete bytes. In practise, this means all but the last QR will
+be mod8 in length of characters. The Base32 padding character **must**
+be omitted, and the `=` character should never be used (and it's
+not part of the legal alnum charset anyway).
 
 Mode "Z" involves compressing the binary data and then sending as
 Base32.  Because the target for this data is embedded systems and
@@ -249,7 +250,7 @@ a `wbits` value of 10. No Gzip nor Zlib file header should be
 included, and they are not needed since the `wbits` value is fixed.
 The compression level should typically be set to maximum
 compression effort (9) but the fixed `wbits` value limits this
-somewhat. We limit `wbits` to this value because it defines the 
+somewhat. We restrict `wbits` to this value because it defines the 
 amount of memory the decoder will need to decompress the
 data. The entire file must be compressed as a whole before splitting
 and encoding into the individual QR codes. Receivers will need
@@ -264,6 +265,23 @@ Keep in mind that some Bitcoin data is very high entropy (addresses,
 UTXO, etc) so zlib compression does not always help. You should
 fall back to Base32 encoding rather than send a QR that is larger
 than needed.
+
+Here are some compression numbers, using `wbits=10` as required
+(all bytes here, no encoding).
+
+File (see testing/data) | Before | After | Compression Ratio
+------------------------|--------|-------|-----------------------
+1in1000out.psbt         |  35644 | 22095 |  38.0%
+1in100out.psbt          |   4142 | 2654  |  35.9%
+1in10out.psbt           |    992 | 670   |  32.5%
+1in20out.psbt           |   1342 | 897   |  33.2%
+1in2out.psbt            |    675 | 458   |  32.1%
+devils-txn.txn          |    666 | 356   |  46.5%
+finalized-by-ckcc.txn   |   1932 | 807   |  58.2%
+last.txn                |    553 | 530   |  4.2%
+nfc-result.txn          |    376 | 362   |  3.7%
+signed.txn              | 100757 | 77090 |  23.5%
+
 
 # Public Service Announcement
 
