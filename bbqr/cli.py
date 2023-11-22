@@ -104,7 +104,7 @@ def make_qrs(infile=None, outfile=None, encoding=None, scale=4, max_version=40, 
     rootpath, ext = os.path.splitext(outfile)
     ext = ext.lower()[1:]
 
-    if ext not in {'png', 'svg'}:
+    if ext not in {'png', 'svg', 'gif'}:
         print(f"Unsupported output file type: {ext}")
         return 1
 
@@ -122,7 +122,7 @@ def make_qrs(infile=None, outfile=None, encoding=None, scale=4, max_version=40, 
             qs[i].svg(open(fn, 'wb'), scale=scale)
             print(f"Created file {fn!r}")
         
-    elif ext == 'png':
+    elif ext in { 'png', 'gif' }:
         from PIL import Image, ImageDraw, ImageChops
         frames = []
 
@@ -145,7 +145,7 @@ def make_qrs(infile=None, outfile=None, encoding=None, scale=4, max_version=40, 
         if num_parts == 1:
             frames[0].save(outfile)
         else:
-            frames[0].save(outfile, format='png', save_all=True, loop=0,
+            frames[0].save(outfile, format=ext, save_all=True, loop=0,
                     duration=500, default_image=False, append_images=frames[1:])
 
         print(f"Created {outfile!r} with {len(frames)} frames.")
