@@ -1,5 +1,5 @@
 
-# BBQr
+# BBQr - Better Bitcoin QR
 
 Encodes larger files into a series of QR codes so they can cross air gaps.
 
