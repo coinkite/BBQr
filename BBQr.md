@@ -1,5 +1,7 @@
 # The BBQr Protocol - Make a series of QR codes to hold lots of data
 
+Public Domain by [Coinkite](https://coinkite.com)
+
 ## Introduction
 
 This protocol is for transmitting binary data over a series of QR codes.
