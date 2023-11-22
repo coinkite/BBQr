@@ -3,6 +3,8 @@
 
 Encodes larger files into a series of QR codes so they can cross air gaps.
 
+Project Status: **New, proposed --- looking for feedback**
+
 # Specification
 
 See [BBQr.md](BBQr.md).
