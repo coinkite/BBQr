@@ -3,7 +3,9 @@
 
 Encodes larger files into a series of QR codes so they can cross air gaps.
 
-Project Status: **New, proposed --- looking for feedback**
+Project Status: **New & proposed --- looking for feedback**
+
+[Project Home on Github](https://github.com/coinkite/BBQr)
 
 # Specification
 
