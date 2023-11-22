@@ -1,4 +1,4 @@
-# The BBQr Protocol - Make a series of QR codes to hold lots of data
+# BBQr - Better Bitcoin QR
 
 Public Domain by [Coinkite](https://coinkite.com)
 
