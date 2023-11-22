@@ -6,7 +6,8 @@
 
 __version__ = '1.0.0'
 
-from .coding import join_qrs, split_qrs
+from .split import split_qrs
+from .join import join_qrs
 
 
 

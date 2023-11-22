@@ -1,10 +1,9 @@
 #
-# (c) Copyright 2023 by Coinkite Inc. This file is put in the public domain.
+# (c) Copyright 2023 by Coinkite Inc. This file is in the public domain.
 #
 # - helpers and basics
 #
 import pyqrcode, zlib
-from math import ceil, floor
 from base64 import b32encode, b32decode
 
 def version_to_chars(v):

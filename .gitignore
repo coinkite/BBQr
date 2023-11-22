@@ -2,3 +2,5 @@ ENV/
 bbqr.egg-info/
 requirements.txt
 __pycache__
+foo.png
+foo*.svg
