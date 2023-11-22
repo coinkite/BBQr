@@ -20,7 +20,7 @@ it also supports CBOR, JSON and Text options for general purpose use.
 
 We carefully consider the data inside QR codes, and apply a
 deep knowledge of how QR codes work, so that no pixel nor byte
-is ever wasted! Internally it supports HEX and Base2 serializations
+is ever wasted! Internally it supports HEX and Base32 serializations
 and a constrained ZLIB option for data compression. This is all
 done with an eye to embedded implementations on very contrained
 devices (ie. hardware wallets), which may not have enough memory
