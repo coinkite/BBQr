@@ -11,7 +11,7 @@ def test_real_scan():
     encoding, data = bbqr.join_qrs(lines)
 
     assert encoding == 'U'
-    assert 'Zlib compressed' in data
-    assert 'PSBT' in data
+    assert b'Zlib compressed' in data
+    assert b'PSBT' in data
 
 # EOF
