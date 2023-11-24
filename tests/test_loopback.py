@@ -78,4 +78,28 @@ def test_edge27(low_ent, encoding, size, version=27):
     assert readback == data
     #valid_qr(vers, parts)
 
+@pytest.mark.parametrize('encoding', 'H2')
+def test_maxsize(encoding):
+    # Build largest possible QR series for each encoding.
+
+    nc = 4296-8       # version 40 capacity in chars, less header
+    if encoding == 'H':
+        pkt_size = nc // 2
+    elif encoding == '2':
+        pkt_size = nc * 5 // 8
+
+    nparts = int('ZZ', 36)       # 1295
+    data = os.urandom(pkt_size * nparts)
+    vers, parts = bbqr.split_qrs(data, 'T', encoding=encoding, min_version=40)
+
+    assert vers == 40
+    count = len(parts)
+    assert count == nparts
+
+    _, readback = bbqr.join_qrs(parts)
+    assert readback == data
+    valid_qr(vers, parts[3:4])
+
+    print(f"Maxsize: {encoding=} => {len(data)} bytes binary")
+
 # EOF

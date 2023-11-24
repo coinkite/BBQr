@@ -55,9 +55,9 @@ This seven-character header must be added inside the start of each QR:
 B$                  fixed header for this protocol (2 chars)
 H                   one char of data encoding: H=Hex
 P                   one char file type: P=PSBT, T=TXN, etc
-05                  2-digits of HEX: total number of QR codes
-00                  2-digits of HEX: which QR code this is in the sequence
-(HEX characters follow, 2 digits per byte of original data)
+05                  2-digits in base 36: total number of QR codes (0-9A-Z)
+00                  2-digits in base 36: which QR code this is in the sequence
+(HEX or Base32 characters follow)
 ```
 
 All blocks **must** be equal length, except for the last one.  This
@@ -132,9 +132,6 @@ Since the typical Bitcoin wire transaction is less than 500 bytes,
 most finalized transactions will be encoded in a single QR
 with no header or other overhead needed.
 
-If you want to communicate "file type" and encoding information,
-you can prepend a fixed header: `B$HP0100` or `B$HT0100`
-
 ### Size Estimates
 
 This is the exact number of bytes that can be encoded into the
@@ -175,7 +172,9 @@ data transfered per QR, if HEX encoding is used.
   are easy to "cut n paste" as a single block.
 - All "N" QR codes must be scanned, there is no way to "skip" one, but they do not
   have to be seen in any particular order.
-- Since a version 40 QR holds 2144 bytes, the largest possible file is around 500k bytes.
+- Since a version 40 QR holds 4296 characters and we support up to
+  1295 (`ZZ` in base 36) parts, the largest possible (uncompressed)
+  file is 2,776,480 for HEX, and 3,470,600 for Base32 encoding.
 - If you are doing 3 QR codes, best if all have about the same amount of data, don't
   just have a small runt QR at the end, because you are making the QR's harder to read.
 - It is visually jarring to have the final QR be a different version (resolution) than
@@ -199,9 +198,8 @@ was designed for direct use inside QR codes.
 
 That said, we will add more type codes if the community wants them.
 
-Future type codes should exclude hex digits, so if we need
-to move to 2-character codes it could be done after the first
-36 are consumed.
+If we need to move to 2-character codes, it could be done after the first
+36 are consumed, but `B$` prefix will be updated to some other symbols.
 
 Code | File Contents
 -----|-----------------
@@ -217,6 +215,11 @@ until your letter is assigned.
 
 Note that J (JSON) and U (unicode) still require the data to be 
 treated as binary and encoded in Hex or Base32.
+
+Other file types will not be added unless there is a single
+well-accepted standard for how to parse the data. Typically this
+means a BIP number, or community-driven web site and implementations
+multiple languages.
 
 ## Advanced Encodings
 

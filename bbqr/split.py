@@ -13,7 +13,7 @@
 import pyqrcode, zlib
 from math import ceil, floor
 from base64 import b32encode, b32decode
-from .utils import version_to_chars, encode_data, decode_data
+from .utils import version_to_chars, encode_data, decode_data, int2base36
 from .consts import HEADER_LEN, KNOWN_FILETYPES
 
 def num_qr_needed(ver, ll, split_mod):
@@ -36,7 +36,7 @@ def num_qr_needed(ver, ll, split_mod):
 
     return (need if actual >= ll else (need + 1)), cap2
 
-def find_best_version(ll, split_mod, min_split=1, max_split=255, min_version=5, max_version=40):
+def find_best_version(ll, split_mod, min_split=1, max_split=1295, min_version=5, max_version=40):
     # Find ideal QR version and provide # of QR and splits needed.
     # - assumes you want to pack the QR, so forcing min_split means you need to have the data
     #   at least the data to fill that # of QR at min_version
@@ -47,12 +47,11 @@ def find_best_version(ll, split_mod, min_split=1, max_split=255, min_version=5, 
     min_version = min(min_version, max_version)     # in case they spec a very low max
 
     assert 1 <= min_version <= max_version <= 40, "min/max version out of range"
-    assert 1 <= min_split <= max_split <= 255, "num splits out of range"
+    assert 1 <= min_split <= max_split <= 1295, "num splits out of range"
 
     options = []
     for ver in range(min_version, max_version+1):
         count, pe = num_qr_needed(ver, ll, split_mod)
-        if count > 255: continue
         if not (min_split <= count <= max_split): continue
         options.append( (ver, count, pe) )
 
@@ -63,7 +62,6 @@ def find_best_version(ll, split_mod, min_split=1, max_split=255, min_version=5, 
         raise ValueError("Cannot make it fit")
 
     return options[0]
-
 
 def split_qrs(raw, type_code, encoding=None, **kws):
     # Take some bytes and yield a series of text values that 
@@ -88,8 +86,8 @@ def split_qrs(raw, type_code, encoding=None, **kws):
     assert per_each * num_qr >= ll
 
     return ver, [f'B${encoding}{type_code}' 
-                        + f'{num_qr:02x}{n:02x}'.upper() 
-                        + encoded[off:off+per_each] for
-                                (n, off) in enumerate(range(0, ll, per_each))]
+                    + int2base36(num_qr) + int2base36(n)
+                    + encoded[off:off+per_each] for
+                            (n, off) in enumerate(range(0, ll, per_each))]
 
 # EOF

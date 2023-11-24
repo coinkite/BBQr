@@ -3,18 +3,31 @@
 #
 # - helpers and basics
 #
-import pyqrcode, zlib
+import zlib
 from base64 import b32encode, b32decode
 
 def version_to_chars(v):
     # return number of **chars** that fit into indicated version QR
     # - assumes L for ECC
     # - assumes alnum encoding
+    import pyqrcode
+
     assert 1 <= v <= 40
     ecc = "L"
     encoding = 2        # alnum
 
     return pyqrcode.tables.data_capacity[v][ecc][encoding]
+
+def int2base36(n):
+    # convert an integer to two digits of base 36 string. 00 thu ZZ
+    # converse is just int(s, base=36)
+    assert 0 <= n <= 1295
+
+    tostr = lambda x: chr(48+x) if x < 10 else chr(65+x-10)
+
+    a, b = divmod(n, 36)
+
+    return tostr(a) + tostr(b)
 
 def encode_data(raw, encoding=None):
     # return new encoding (if we upgraded) and the

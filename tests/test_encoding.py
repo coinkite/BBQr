@@ -38,4 +38,15 @@ def test_compression(fname):
     print(f'{fname}: {len(raw)} => {len(rb)} bytes, {ratio:.1f}% compression')
     
 
+@pytest.mark.parametrize('val', [0, 1295] + list(range(250, 400)))
+def test_base36(val):
+    # check radix 36 math
+    from bbqr.utils import int2base36
+
+    s = int2base36(val)
+    assert len(s) == 2
+    assert s.upper() == s
+
+    assert int(s, 36) == val
+
 # EOF

@@ -17,7 +17,7 @@ def join_qrs(parts):
     assert hdr[0:2] == 'B$', 'fixed header not found, expected B$'
     encoding = hdr[2]
     file_type = hdr[3]
-    num_parts = int(hdr[4:6], 16)
+    num_parts = int(hdr[4:6], 36)
 
     assert num_parts >= 1, 'zero parts?'
     assert encoding in 'H2Z', f'bad encoding: {encoding}'
@@ -26,7 +26,7 @@ def join_qrs(parts):
     # ok to have dups here, just need them all
     data = {}
     for p in parts:
-        idx = int(p[6:8], 16)
+        idx = int(p[6:8], 36)
         assert idx < num_parts, f'got part {idx} but only expecting {num_parts}'
 
         if idx in data:
