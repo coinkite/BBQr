@@ -47,6 +47,9 @@ By using Base32 character encoding inside a QR code with the unique
 space, and encodes 5 bits of binary), we can acheive the smallest
 possible QR codes.
 
+The largest possible (uncompressed) data payload in 3,470,600 bytes
+spread across in 1,295 version 40 QR codes.
+
 # Example Image
 
 ![Example of BBQr Image](example.png)
