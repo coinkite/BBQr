@@ -212,7 +212,7 @@ Code | File Contents
   X  | Executable data (platform dependant)
 
 _All other codes are reserved._ Please submit a PR to this repo
-to add your new types. If you are experimenting, please use "X"
+to add your new types. If you are experimenting, please use "B"
 until your letter is assigned.
 
 Note that J (JSON) and U (unicode) still require the data to be 
