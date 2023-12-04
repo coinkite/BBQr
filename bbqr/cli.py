@@ -5,11 +5,11 @@
 # This code will be added to you path when you do "pip install" on the BBQr package.
 #
 #
-import click, sys, os, pdb, io
+import click, sys, os, pdb, io, random
 from pprint import pformat
 from functools import wraps
 from bbqr import split_qrs, join_qrs
-from bbqr.consts import FILETYPE_NAMES
+from bbqr.consts import FILETYPE_NAMES, KNOWN_FILETYPES
 
 # Cleanup display (supress traceback) for user-feedback exceptions
 #_sys_excepthook = sys.excepthook
@@ -40,51 +40,61 @@ def show_table():
     from bbqr import tables
     tables.dump_table()
 
+
 @main.command('make')
 @click.argument('infile', type=click.File('rb'))
-@click.option('--encoding', '-e', metavar="H2Z", default=None, type=click.Choice('H2Z'))
-@click.option('--max_version', '-v', metavar="(default: 40)", default=40,
-                        help="Max QR version to use (limits size)")
-@click.option('--min_split', '-m', metavar="(default: 1)", default=1,
-                        help="Produce at least this many QR codes")
-@click.option('--scale', '-s', metavar="(default: 4)", default=4,
-                        help="For image outputs, the size of each QR pixel")
+@click.option('--encoding', '-e', metavar="(char)", default=None, type=click.Choice('H2Z'), help="Force low-level encoding: H 2 or Z")
+@click.option('--filetype', '-t', metavar='(char)', default=None, type=click.Choice(KNOWN_FILETYPES), help="Force specific file type code: "+''.join(KNOWN_FILETYPES))
+@click.option('--max-version', '-v', metavar="[1-40]", default=40,
+                        help="Max QR version to use (limits size, default unlimited: 40)")
+@click.option('--min-split', '-m', metavar="NUM", default=1,
+                        help="Produce at least this many QR codes (default: 1)")
+@click.option('--frame-delay', '-d', metavar="[ms/fr]", default=250, type=int,
+                        help="Delay between frame of animation (default: 250ms)")
+@click.option('--scale', '-s', metavar="NUM", default=4,
+                        help="For image outputs, the size of each QR pixel (default: 4)")
 @click.option('--outfile', '-o', metavar="filename.png",
                         help="Name for output file", default=None,
                         type=click.Path(dir_okay=False, writable=True, allow_dash=True))
-def make_qrs(infile=None, outfile=None, encoding=None, scale=4, max_version=40, min_split=1):
+@click.option('--fake-data', help="Generate huge empty data", type=int)
+@click.option('--randomize-order', '-r',  help="Shuffle output parts into random ordering", is_flag=True)
+def make_qrs(randomize_order, infile=None, outfile=None, encoding=None, scale=4, max_version=40, frame_delay=250, min_split=1, fake_data=None, filetype=None):
     """Encode file as a series of QR codes"""
 
-    raw = infile.read()
+    if fake_data:
+        # for Mk4/Q: maximum psbt size
+        raw = bytes(fake_data)
+    else:
+        raw = infile.read()
 
     assert len(raw) > 5
 
-    filetype = None
-    if '.psb' in infile.name.lower():
-        filetype = 'P'
-        if raw[0:5] != b'psbt\xff':
-            if raw[0:10].decode().isprintable():
-                print("Someone has saved Base64 or Hex encoded PSBT to disk? We want raw meat.")
-            raise ValueError(infile.name)
-    elif raw[0:8] in { b'01000000', b'02000000'}:
-        # transaction in hex format
-        filetype = 'T'
-        raw = bytes.fromhex(raw.decode('ascii'))
-    elif raw[0:4] in { b'\x01\x00\x00\x00', b'\x02\x00\x00\x00'}:
-        # binary transaction
-        filetype = 'T'
-    elif raw[0] == b'{' and raw[-1] == b'}':
-        # probably JSON
-        filetype = 'J'
-    else:
-        # otherwise text
-        try:
-            raw.decode('utf-8')
-            filetype = 'U'
-        except UnicodeError:
-            raise ValueError(f'Not text, and unknown format: {infile.name}')
+    if not filetype:
+        if '.psb' in infile.name.lower():
+            filetype = 'P'
+            if raw[0:5] != b'psbt\xff':
+                if raw[0:10].decode().isprintable():
+                    print("Someone has saved Base64 or Hex encoded PSBT to disk? We want raw meat.")
+                raise ValueError(infile.name)
+        elif raw[0:8] in { b'01000000', b'02000000'}:
+            # transaction in hex format
+            filetype = 'T'
+            raw = bytes.fromhex(raw.decode('ascii'))
+        elif raw[0:4] in { b'\x01\x00\x00\x00', b'\x02\x00\x00\x00'}:
+            # binary transaction
+            filetype = 'T'
+        elif raw[0] == b'{':
+            # probably JSON
+            filetype = 'J'
+        else:
+            # otherwise text or binary
+            try:
+                raw.decode('utf-8')
+                filetype = 'U'
+            except UnicodeError:
+                filetype = 'B'
 
-    print(f"Detected file type: {filetype} -> {FILETYPE_NAMES[filetype]}")
+        print(f"Detected file type: {filetype} -> {FILETYPE_NAMES[filetype]}", file=sys.stderr)
 
     vers, parts = split_qrs(raw, type_code=filetype, encoding=encoding,
                                     max_version=max_version, min_split=min_split)
@@ -95,6 +105,9 @@ def make_qrs(infile=None, outfile=None, encoding=None, scale=4, max_version=40, 
         print(f"A single QR version {vers} will be needed.", file=sys.stderr)
     else:
         print(f"Need {num_parts} QR's each of version {vers}.", file=sys.stderr)
+
+    if randomize_order:
+        random.shuffle(parts)
 
     if not outfile or outfile == '-':
         for p in parts:
@@ -127,7 +140,7 @@ def make_qrs(infile=None, outfile=None, encoding=None, scale=4, max_version=40, 
         frames = []
 
         for i in range(num_parts):
-            xbm = qs[i].xbm(scale=scale)
+            xbm = qs[i].xbm(scale=scale, quiet_zone=10)
             img = ImageChops.invert(Image.open(io.BytesIO(xbm.encode()))).convert('L')
             if num_parts > 1:
                 # add progress bar
@@ -146,12 +159,8 @@ def make_qrs(infile=None, outfile=None, encoding=None, scale=4, max_version=40, 
             frames[0].save(outfile)
         else:
             frames[0].save(outfile, format=ext, save_all=True, loop=0,
-                    duration=500, default_image=False, append_images=frames[1:])
+                    duration=frame_delay, default_image=False, append_images=frames[1:])
 
         print(f"Created {outfile!r} with {len(frames)} frames.")
-
-
-        
-
 
 # EOF
