@@ -14,9 +14,10 @@ See full spec [BBQr.md](BBQr.md).
 # Summary
 
 This protocol enables files larger than can fit into a single QR
-to be sent as a series of QR codes (an "animated QR"). The target
-file types are PSBT (BIP-174) and signed Bitcoin transactions, but
-it also supports CBOR, JSON and Text options for general purpose use.
+to be sent as a series of QR codes (sometimes called an "animated
+QR"). The target file types are PSBT (BIP-174) and signed Bitcoin
+transactions, but it also supports CBOR, JSON and Text options for
+general purpose use.
 
 We carefully consider the data inside QR codes, and apply a
 deep knowledge of how QR codes work, so that no pixel nor byte
@@ -75,3 +76,20 @@ Created 'example.png' with 8 frames.
 
 Public Domain code by [Coinkite](https://coinkite.com)
 
+
+## Useful Pipelines
+
+These will load your clipboard with example data suitable for the COLDCARD Q Simulator.
+
+See also [`psbt_faker`](https://github.com/Coldcard/psbt_faker)
+
+```
+% psbt_faker - | bbqr make - -t P | pbcopy
+A single QR version 18 will be needed.
+
+% bbqr make - --fake-data 2048000 -t P | pbcopy
+A single QR version 35 will be needed.
+
+% psbt_faker -n 200 - | bbqr make - -t P -r | pbcopy
+Need 5 QR's each of version 37.
+```
