@@ -55,8 +55,8 @@ This seven-character header must be added inside the start of each QR:
 B$                  fixed header for this protocol (2 chars)
 H                   one char of data encoding: H=Hex
 P                   one char file type: P=PSBT, T=TXN, etc
-05                  2-digits in base 36: total number of QR codes (0-9A-Z)
-00                  2-digits in base 36: which QR code this is in the sequence
+05                  Two digits of base 36: total number of QR codes (0-9A-Z)
+00                  Two digits of base 36: which QR code this is in the sequence
 (HEX or Base32 characters follow)
 ```
 
@@ -208,6 +208,8 @@ Code | File Contents
   J  | JSON data (general purpose)
   C  | CBOR data (general purpose)
   U  | Unicode text (UTF-8 encoded, simple text)
+  B  | Binary data (generic octet stream)
+  X  | Executable data (platform dependant)
 
 _All other codes are reserved._ Please submit a PR to this repo
 to add your new types. If you are experimenting, please use "X"
@@ -287,6 +289,26 @@ last.txn                |    553 | 530   |  4.2%
 nfc-result.txn          |    376 | 362   |  3.7%
 signed.txn              | 100757 | 77090 |  23.5%
 
+# Coldcard Q Suggestions
+
+## Encoding
+
+- 250ms frame rate is recommended. Coldcard Q is fine-tuned for this data rate.
+- Avoid very high versions (too dense). Better to have a more lower-rez QR codes, when sending.
+- Always use the Zlib encoding to save space, but if you don't want to implement it... don't.
+- If you want to KISS, take hex encoded PSBT and split it evenly, then just add 8 character
+  heading to each one: `B$HP0n0x` where `n` (number of parts) and `x` (which part)
+  is single character: 0-9/A-Z for up to 36 parts.
+
+## Decoding
+
+- Coldcard Q will favour bare QR codes (not BBQr encoded) when it can be made to fit. For
+  signed transactions, that will be HEX encoded bytes.
+- Because modern cellphones are so good at scanning very high version QR codes, the
+  Coldcard Q will produce up to verison 40 in order to avoid animating.
+- To better suit cellphones capabilties, the animated BBQr's the Coldcard generates
+  will be shown rather slowly.
+- Be prepared to decode Zlib encoded QR codes.
 
 # Public Service Announcement
 
