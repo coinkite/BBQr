@@ -221,7 +221,7 @@ treated as binary and encoded in Hex or Base32.
 Other file types will not be added unless there is a single
 well-accepted standard for how to parse the data. Typically this
 means a BIP number, or community-driven web site and implementations
-multiple languages.
+in multiple languages.
 
 ## Advanced Encodings
 
