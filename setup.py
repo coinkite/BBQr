@@ -24,7 +24,8 @@ tests_require = [
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-from bbqr.version import __version__
+# get the version w/o importing anything other parts which might need requirements
+exec(open('bbqr/version.py').read())
 
 setup(
     name='bbqr',
