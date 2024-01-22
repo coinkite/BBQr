@@ -10,11 +10,11 @@
 from setuptools import setup
 
 requirements = [
+    'pyqrcode',
 ]
 
 cli_requirements = [
     'click>=6.7',
-    'pyqrcode',
 ]
 
 tests_require = [
