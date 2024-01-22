@@ -4,8 +4,7 @@
 # - just two funcitons you should need
 #
 
-__version__ = '1.0.0'
-
+from .version import __version__
 from .split import split_qrs
 from .join import join_qrs
 
