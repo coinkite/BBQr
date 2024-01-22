@@ -8,9 +8,9 @@ import pytest, os, pyqrcode
 def test_real_scan():
     lines = [ln.strip() for ln in open('data/real-scan.txt', 'rt').readlines() if ln.strip()]
 
-    encoding, data = bbqr.join_qrs(lines)
+    file_type, data = bbqr.join_qrs(lines)
 
-    assert encoding == 'U'
+    assert file_type == 'U'
     assert b'Zlib compressed' in data
     assert b'PSBT' in data
 
