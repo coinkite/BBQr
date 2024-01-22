@@ -40,6 +40,56 @@ def show_table():
     from bbqr import tables
     tables.dump_table()
 
+@main.command('decode')
+@click.option('--raw', '-r',  help="Output data as raw binary", is_flag=True)
+def decode_bbqr(raw):
+    """Undo a received BBQr series, back into useful data."""
+
+    if sys.stdin.isatty():
+        print(f"Paste data received, in any order here. Newlines between them.", file=sys.stderr)
+
+    lines = [ln.strip() for ln in sys.stdin.readlines() if ln.strip()]
+
+    try:
+        file_type, data = join_qrs(lines)
+    except Exception as exc:
+        print(f"Error: {exc}")
+        return 1
+
+    if raw:
+        click.get_binary_stream('stdout').write(data)
+        return 0
+    
+    if file_type == 'J':
+        # pretty-print JSON
+        import json
+        j = json.loads(data)
+
+        print(json.dumps(j, indent=2))
+
+    elif file_type == 'U':
+        data = data.decode('utf-8')
+        print(data)
+
+    elif file_type == 'P':
+        from base64 import b64encode
+        print("PSBT File:", file=sys.stderr)
+        print(b64encode(data))
+    elif file_type == 'T':
+        print("Bitcoin Transaction:", file=sys.stderr)
+        from binascii import b2a_hex
+        print(b2a_hex(data))
+
+    elif file_type in 'XB':
+        print(f"{len(data)} bytes of Binary data... (not shown)", file=sys.stderr)
+
+    elif file_type == 'C':
+        print(f"{len(data)} bytes of raw CBOR data... (not shown)", file=sys.stderr)
+
+    else:
+        print(f'Unknown file type code: {file_type}')
+
+
 
 @main.command('make')
 @click.argument('infile', type=click.File('rb'))
