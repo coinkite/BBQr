@@ -74,7 +74,7 @@ def decode_bbqr(raw):
     elif file_type == 'P':
         from base64 import b64encode
         print("PSBT File:", file=sys.stderr)
-        print(b64encode(data))
+        print(b64encode(data).decode('ascii'))
     elif file_type == 'T':
         print("Bitcoin Transaction:", file=sys.stderr)
         from binascii import b2a_hex
@@ -117,7 +117,7 @@ def make_qrs(randomize_order, infile=None, outfile=None, encoding=None, scale=4,
     else:
         raw = infile.read()
 
-    assert len(raw) > 5
+    assert len(raw) > 5, 'Input data too short?!'
 
     if not filetype:
         if '.psb' in infile.name.lower():

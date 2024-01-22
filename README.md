@@ -93,3 +93,13 @@ A single QR version 35 will be needed.
 % psbt_faker -n 200 - | bbqr make - -t P -r | pbcopy
 Need 5 QR's each of version 37.
 ```
+
+These are round-trip examples, where encode and decode are performed.
+
+```
+% psbt_faker -n 10 - | bbqr make - -t P -r | bbqr decode
+A single QR version 25 will be needed.
+PSBT File:
+cHNidP....
+
+```
