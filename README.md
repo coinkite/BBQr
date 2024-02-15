@@ -104,23 +104,28 @@ cHNidP....
 
 ```
 
-## COLDCARD Q QR fun
+## Signing Transaction with COLDCARD Q
 
-1.) Start **COLDCARD Q**, choose `Scan Any QR Code` from main menu and scan below Seed QR.
-    This seed is COLDCARD simulator key and is well known. Please, **DO NOT**
-    send any funds to this seed. Simulator seed imported as tmp seed is needed
-    to abe able to sign.
+1) Using **COLDCARD Q** choose `Scan Any QR Code` from main menu and scan this Seed QR
+   to temporarily import a new seed:
 
 ![simulator_seed_qr](sim_sqr.png)
 
-2.) Confirm creation of temporary seed and if `Seed Vault` enabled decide if add to vault.
-    
-3.) Navigate to `Scan Any QR Code` and try to sign below transactions:
+```patch
+- This seed is the COLDCARD simulator key and is well known!
+- DO NOT send any funds to this seed.
+```
 
-    a.) Basic 1 input 2 outputs
+2) Confirm import of temporary seed and if **Seed Vault** is enabled you may save it there
+   (not required).
+    
+3) Navigate to `Scan Any QR Code` again, and scan either of these transactions. You'll
+   be shown the details, and if accepted, the signed result will be shown as BBQr.
+
+### PSBT: Basic 1 input 2 outputs
 
 ![tx-1in2out](small.png)
 
-    b.) Locktimes
+### PSBT: 10 in, 2 out with Locktimes
 
 ![tx-10in2out-locktimes](locktimes.png)
