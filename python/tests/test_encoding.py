@@ -6,16 +6,16 @@ from context import bbqr
 import pytest, os, pyqrcode
 
 @pytest.mark.parametrize('fname', [
-	'data/1in1000out.psbt',
-	'data/1in100out.psbt',
-	'data/1in10out.psbt',
-	'data/1in20out.psbt',
-	'data/1in2out.psbt',
-	'data/devils-txn.txn',
-	'data/finalized-by-ckcc.txn',
-	'data/last.txn',
-	'data/nfc-result.txn',
-	'data/signed.txn',
+	'../test_data/1in1000out.psbt',
+	'../test_data/1in100out.psbt',
+	'../test_data/1in10out.psbt',
+	'../test_data/1in20out.psbt',
+	'../test_data/1in2out.psbt',
+	'../test_data/devils-txn.txn',
+	'../test_data/finalized-by-ckcc.txn',
+	'../test_data/last.txn',
+	'../test_data/nfc-result.txn',
+	'../test_data/signed.txn',
 ])
 def test_compression(fname):
     # more of a measurement than a test...
