@@ -1,11 +1,14 @@
 import { ENCODINGS, FILETYPES } from './consts';
-import { Encoding, FileType } from './types';
+import { Encoding, FileType, JoinResult } from './types';
 import { decodeData } from './utils';
 
 /**
  * Decodes and joins QR code parts back to binary data.
+ *
+ * @param parts Array of QR code parts
+ * @returns Object containing the file type, encoding, and raw binary data.
  */
-export function joinQRs(parts: string[]) {
+export function joinQRs(parts: string[]): JoinResult {
   const headers = new Set(parts.map((p) => p.slice(0, 6)));
 
   if (headers.size !== 1) {

@@ -1,5 +1,5 @@
 import { FILETYPES, HEADER_LEN } from './consts';
-import { FileType, SplitOptions, Version } from './types';
+import { FileType, SplitOptions, SplitResult, Version } from './types';
 import {
   base64ToBytes,
   encodeData,
@@ -74,7 +74,11 @@ function findBestVersion(length: number, splitMod: number, opts: Required<SplitO
  *
  * @returns An object containing the version of the QR codes, their string parts, and the actual encoding used.
  */
-export function splitQRs(raw: Uint8Array, fileType: FileType, opts: SplitOptions = {}) {
+export function splitQRs(
+  raw: Uint8Array,
+  fileType: FileType,
+  opts: SplitOptions = {}
+): SplitResult {
   if (!FILETYPES.has(fileType)) {
     throw new Error(`Invalid value for fileType: ${fileType}`);
   }

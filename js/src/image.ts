@@ -13,7 +13,11 @@ import { shuffled } from './utils';
  * @param options.randomizeOrder Whether to randomize the order of the parts. Defaults to false.
  * @returns A Promise that resolves to an ArrayBuffer containing the image data;
  */
-export async function renderQRImage(parts: string[], version: Version, options: ImageOptions = {}) {
+export async function renderQRImage(
+  parts: string[],
+  version: Version,
+  options: ImageOptions = {}
+): Promise<ArrayBuffer> {
   if (typeof window === 'undefined') {
     throw new Error('makeImage is only available in a web browser environment.');
   }

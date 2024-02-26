@@ -12,6 +12,18 @@ export type SplitOptions = {
   maxVersion?: Version;
 };
 
+export type SplitResult = {
+  version: Version;
+  parts: string[];
+  encoding: Encoding;
+};
+
+export type JoinResult = {
+  fileType: FileType;
+  encoding: Encoding;
+  raw: Uint8Array;
+};
+
 export type ImageOptions = {
   frameDelay?: number;
   randomizeOrder?: boolean;
