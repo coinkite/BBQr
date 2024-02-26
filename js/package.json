@@ -1,7 +1,7 @@
 {
   "name": "bbqr",
   "private": false,
-  "version": "0.0.1-next.7",
+  "version": "0.0.1-next.11",
   "repository": {
     "type": "git",
     "url": "git://github.com/coinkite/BBQr.git",
@@ -12,11 +12,11 @@
     "dist"
   ],
   "module": "./dist/bbqr.js",
+  "browser": "./dist/bbqr.iife.js",
   "types": "./dist/main.d.ts",
   "exports": {
     ".": {
       "import": "./dist/bbqr.js",
-      "require": "./dist/bbqr.umd.js",
       "types": "./dist/main.d.ts"
     }
   },

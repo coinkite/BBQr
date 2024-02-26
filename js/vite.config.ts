@@ -10,9 +10,5 @@ export default defineConfig({
       formats: ['es', 'iife'],
     },
   },
-  esbuild: {
-    // removes console.log from production builds (but useful in dev)
-    pure: ['console.log'],
-  },
   plugins: [dts()],
 });
