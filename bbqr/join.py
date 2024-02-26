@@ -35,7 +35,7 @@ def join_qrs(parts):
             data[idx] = p[8:]
 
     missing = set(range(num_parts)) - set(data)
-    assert not missing, f'parts missing: {missing:r}'
+    assert not missing, f'parts missing: {missing!r}'
 
     parts = [data[i] for i in range(num_parts)]
 
