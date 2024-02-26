@@ -67,10 +67,10 @@ Created 'example.png' with 8 frames.
 
 # Code Examples
 
-- [spliting QRs](bbqr/split.py)
-- [joining QRs](bbqr/join.py)
-- [binary to internal encoding](bbqr/utils.py)
-- [wrapper CLI](bbqr/cli.py)
+- [spliting QRs](python/bbqr/split.py)
+- [joining QRs](python/bbqr/join.py)
+- [binary to internal encoding](python/bbqr/utils.py)
+- [wrapper CLI](python/bbqr/cli.py)
 
 # License
 
