@@ -5,6 +5,3 @@ __pycache__
 foo.png
 foo*.svg
 .DS_Store
-
-js/node_modules
-js/dist
