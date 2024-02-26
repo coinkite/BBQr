@@ -1,3 +1,9 @@
+/**
+ * (c) Copyright 2024 by Coinkite Inc. This file is in the public domain.
+ *
+ * Types
+ */
+
 import { ENCODING_NAMES, FILETYPE_NAMES, QR_DATA_CAPACITY } from './consts';
 
 export type FileType = keyof typeof FILETYPE_NAMES;
@@ -28,3 +34,5 @@ export type ImageOptions = {
   frameDelay?: number;
   randomizeOrder?: boolean;
 };
+
+// EOF

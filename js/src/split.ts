@@ -1,3 +1,9 @@
+/**
+ * (c) Copyright 2024 by Coinkite Inc. This file is in the public domain.
+ *
+ * Splitting of data and encoding as BBQr QR codes.
+ */
+
 import { FILETYPES, HEADER_LEN } from './consts';
 import { FileType, SplitOptions, SplitResult, Version } from './types';
 import {
@@ -196,3 +202,5 @@ export async function detectFileType(
     return { fileType: 'U', raw };
   }
 }
+
+// EOF

@@ -1,3 +1,9 @@
+/**
+ * (c) Copyright 2024 by Coinkite Inc. This file is in the public domain.
+ *
+ * QR code image rendering.
+ */
+
 import QRCode from 'qrcode';
 import UPNG from 'upng-js';
 import { ImageOptions, Version } from './types';
@@ -97,3 +103,5 @@ export async function renderQRImage(
 
   return UPNG.encode(frames, width, height, 0, delays);
 }
+
+// EOF

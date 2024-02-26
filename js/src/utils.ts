@@ -1,3 +1,9 @@
+/**
+ * (c) Copyright 2024 by Coinkite Inc. This file is in the public domain.
+ *
+ * Helper/utility functions.
+ */
+
 import { base32 } from '@scure/base';
 import pako from 'pako';
 import { QR_DATA_CAPACITY } from './consts';
@@ -206,3 +212,5 @@ export function encodeData(raw: Uint8Array, encoding?: Encoding) {
     splitMod: 8,
   };
 }
+
+// EOF

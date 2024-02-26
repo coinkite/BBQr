@@ -1,3 +1,9 @@
+/**
+ * (c) Copyright 2024 by Coinkite Inc. This file is in the public domain.
+ *
+ * QR code decoding/joining.
+ */
+
 import { ENCODINGS, FILETYPES } from './consts';
 import { Encoding, FileType, JoinResult } from './types';
 import { decodeData } from './utils';
@@ -69,3 +75,5 @@ export function joinQRs(parts: string[]): JoinResult {
 
   return { fileType, encoding, raw };
 }
+
+// EOF

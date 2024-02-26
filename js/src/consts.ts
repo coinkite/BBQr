@@ -1,3 +1,9 @@
+/**
+ * (c) Copyright 2024 by Coinkite Inc. This file is in the public domain.
+ *
+ * Constants and fixed values.
+ */
+
 // Fixed-length header
 export const HEADER_LEN = 8;
 
@@ -263,3 +269,5 @@ export const QR_DATA_CAPACITY = {
     H: { 0: 10208, 1: 3057, 2: 1852, 4: 1273, 8: 784 },
   },
 } as const;
+
+// EOF
