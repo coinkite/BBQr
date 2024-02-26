@@ -77,51 +77,6 @@ function joinByteParts(parts: Uint8Array[]) {
   return rv;
 }
 
-export function decodeData(parts: string[], encoding: Encoding) {
-  if (encoding === 'H') {
-    return joinByteParts(parts.map((p) => hexToBytes(p)));
-  }
-
-  const bytes = joinByteParts(
-    parts.map((p) => {
-      const padding = (8 - (p.length % 8)) % 8;
-
-      return base32.decode(p + '='.repeat(padding));
-    })
-  );
-
-  if (encoding === 'Z') {
-    return pako.inflate(bytes, { windowBits: -10 });
-  }
-
-  return bytes;
-}
-
-export function looksLikePsbt(data: Uint8Array) {
-  try {
-    // 'psbt' + 0xff
-    return new Uint8Array([0x70, 0x73, 0x62, 0x74, 0xff]).every((b, i) => b === data[i]);
-  } catch (err) {
-    return false;
-  }
-}
-
-export function shuffled<T>(arr: T[]): T[] {
-  // modern Fisher-Yates shuffle (https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm)
-
-  // create a copy so we don't mutate the original
-  arr = [...arr];
-
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-  }
-
-  return arr;
-}
-
 export function isValidVersion(v: number): v is Version {
   // act as a TS type guard but also a runtime check
 
@@ -133,6 +88,8 @@ export function isValidSplit(s: number) {
 }
 
 export function validateSplitOptions(opts: SplitOptions) {
+  // ensure all split options are valid, filling in defaults as needed
+
   const allOpts = {
     minVersion: opts.minVersion ?? 5,
     maxVersion: opts.maxVersion ?? 40,
@@ -158,6 +115,31 @@ export function validateSplitOptions(opts: SplitOptions) {
   }
 
   return allOpts;
+}
+
+export function looksLikePsbt(data: Uint8Array) {
+  try {
+    // 'psbt' + 0xff
+    return new Uint8Array([0x70, 0x73, 0x62, 0x74, 0xff]).every((b, i) => b === data[i]);
+  } catch (err) {
+    return false;
+  }
+}
+
+export function shuffled<T>(arr: T[]): T[] {
+  // modern Fisher-Yates shuffle (https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm)
+
+  // create a copy so we don't mutate the original
+  arr = [...arr];
+
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+
+  return arr;
 }
 
 export function versionToChars(v: Version) {
@@ -208,9 +190,32 @@ export function encodeData(raw: Uint8Array, encoding?: Encoding) {
 
   return {
     encoding,
+    // base32 without padding
     encoded: base32.encode(raw).replace(/=*$/, ''),
     splitMod: 8,
   };
+}
+
+export function decodeData(parts: string[], encoding: Encoding) {
+  // decode the parts back into a Uint8Array
+
+  if (encoding === 'H') {
+    return joinByteParts(parts.map((p) => hexToBytes(p)));
+  }
+
+  const bytes = joinByteParts(
+    parts.map((p) => {
+      const padding = (8 - (p.length % 8)) % 8;
+
+      return base32.decode(p + '='.repeat(padding));
+    })
+  );
+
+  if (encoding === 'Z') {
+    return pako.inflate(bytes, { windowBits: -10 });
+  }
+
+  return bytes;
 }
 
 // EOF
