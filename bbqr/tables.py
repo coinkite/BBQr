@@ -17,7 +17,7 @@ def dump_table():
 
     for v in range(1, 41):
         chars = version_to_chars(v)
-        if chars < 1500 and v not in {1, 11}: continue
+        if chars < 1500 and v not in {1, 11, 14}: continue
 
         sz = ver_size[v]
         cap = (chars - HEADER_LEN)
