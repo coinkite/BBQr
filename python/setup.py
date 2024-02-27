@@ -21,7 +21,7 @@ tests_require = [
     'pytest'
 ]
 
-with open("README.md", "r") as fh:
+with open("../README.md", "r") as fh:
     long_description = fh.read()
 
 # get the version w/o importing anything other parts which might need requirements

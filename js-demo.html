@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>BBQr JS Demo</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.3/css/pico.css"
+      integrity="sha384-eMqr88t8LtEqdsA81XqlcxxMpxUHniTNNCXEEe9lW0356TLykUqw97i/Gxpw1GU2"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bbqr@1.0.0/dist/bbqr.iife.js"
+      integrity="sha256-cqy1Qgi1C2i4pYywJlbVCRTJ+kDIrVqLc0KH21cMicQ="
+      crossorigin="anonymous"
+    ></script>
+
+    <style>
+      html {
+        height: 100%;
+      }
+
+      body {
+        height: 100%;
+      }
+
+      .hero {
+        width: fit-content;
+        margin: 0 auto;
+        font-weight: 700;
+        font-size: min(1.95vw, 1.2rem);
+        padding: 0.75em 1.5em;
+        line-height: 1;
+      }
+
+      .drag-over {
+        cursor: copy;
+      }
+
+      .drag-overlay {
+        display: none;
+      }
+
+      .drag-over .drag-overlay {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: hsla(0, 0%, 0%, 0.7);
+      }
+
+      .drag-overlay > * {
+        margin: auto;
+        color: hsla(0, 100%, 100%, 0.9);
+        font-weight: 600;
+        font-size: 2rem;
+      }
+
+      textarea {
+        width: 100%;
+      }
+
+      dialog img {
+        display: block;
+        margin: 0 auto;
+      }
+
+      dialog.busy .success {
+        display: none;
+      }
+
+      dialog.error .success {
+        display: none;
+      }
+
+      dialog:not(.busy) .busy {
+        display: none;
+      }
+
+      dialog:not(.error) .error {
+        display: none;
+      }
+
+      dialog img {
+        border: 1px solid hsla(0, 0%, 0%, 0.1);
+        border-radius: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <pre class="hero">
+BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQQ                          
+B::::::::::::::::B  B::::::::::::::::B     QQ:::::::::QQ                        
+B::::::BBBBBB:::::B B::::::BBBBBB:::::B  QQ:::::::::::::QQ                      
+BB:::::B     B:::::BBB:::::B     B:::::BQ:::::::QQQ:::::::Q                     
+  B::::B     B:::::B  B::::B     B:::::BQ::::::O   Q::::::Q rrrrr   rrrrrrrrr   
+  B::::B     B:::::B  B::::B     B:::::BQ:::::O     Q:::::Q r::::rrr:::::::::r  
+  B::::BBBBBB:::::B   B::::BBBBBB:::::B Q:::::O     Q:::::Q r:::::::::::::::::r 
+  B:::::::::::::BB    B:::::::::::::BB  Q:::::O     Q:::::Q rr::::::rrrrr::::::r
+  B::::BBBBBB:::::B   B::::BBBBBB:::::B Q:::::O     Q:::::Q  r:::::r     r:::::r
+  B::::B     B:::::B  B::::B     B:::::BQ:::::O     Q:::::Q  r:::::r     rrrrrrr
+  B::::B     B:::::B  B::::B     B:::::BQ:::::O  QQQQ:::::Q  r:::::r            
+  B::::B     B:::::B  B::::B     B:::::BQ::::::O Q::::::::Q  r:::::r            
+BB:::::BBBBBB::::::BBB:::::BBBBBB::::::BQ:::::::QQ::::::::Q  r:::::r            
+B:::::::::::::::::B B:::::::::::::::::B  QQ::::::::::::::Q   r:::::r            
+B::::::::::::::::B  B::::::::::::::::B     QQ:::::::::::Q    r:::::r            
+BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQ::::QQ  rrrrrrr            
+                                                      Q:::::Q                    
+                                                      QQQQQQ</pre
+      >
+    </header>
+
+    <main class="container">
+      <p>
+        This page makes use of the
+        <a href="https://www.npmjs.com/package/bbqr" target="_blank" rel="noopener"
+          >BBQr JavaScript library</a
+        >
+        to apply BBQr encoding to PSBTs, raw Bitcoin transactions, or other types of data. Visit the
+        <a href="https://bbqr.org">BBQr home page</a> for more information.
+      </p>
+
+      <p><strong>How to use?</strong></p>
+
+      <ul>
+        <li>Option A: Drag and drop a file anywhere on this page.</li>
+        <li>Option B: Paste the contents of a file into the textbox below.</li>
+      </ul>
+
+      <p>
+        <em
+          >Note: PSBTs and Bitcoin transactions are supported in raw binary format as well as
+          encoded as Base64 or HEX.</em
+        >
+      </p>
+
+      <textarea id="text-input" rows="8" placeholder="Paste file contents here..."></textarea>
+
+      <dialog id="result-dialog">
+        <article class="success">
+          <h2>BBQr created</h2>
+          <div id="result-text"></div>
+          <footer>
+            <button>Dismiss</button>
+          </footer>
+        </article>
+
+        <article class="error">
+          <h2>Error!</h2>
+          <div id="error-text"></div>
+          <footer>
+            <button>Dismiss</button>
+          </footer>
+        </article>
+
+        <article class="busy">
+          <h2>Generating BBQr, please wait...</h2>
+          <footer>
+            <button>Cancel</button>
+          </footer>
+        </article>
+      </dialog>
+    </main>
+
+    <div class="drag-overlay">
+      <p>Drop your file here!</p>
+    </div>
+
+    <script>
+      const resultEl = document.querySelector('#result-dialog');
+      const resultContentEl = document.querySelector('#result-text');
+      const errorContentEl = document.querySelector('#error-text');
+      const inputEl = document.querySelector('#text-input');
+
+      function clearPrevious() {
+        const existingImgs = resultEl.querySelectorAll('img');
+
+        existingImgs.forEach((img) => {
+          // remove references to any old images
+          URL.revokeObjectURL(img.src);
+        });
+
+        resultContentEl.innerHTML = '';
+
+        resultEl.classList.remove('error');
+      }
+
+      let busy = false;
+
+      async function handleFileOrTextInput(e) {
+        if (busy) {
+          return;
+        }
+
+        busy = true;
+        resultEl.classList.add('busy');
+        resultEl.showModal();
+
+        try {
+          clearPrevious();
+
+          let input;
+
+          if (e instanceof DragEvent) {
+            e.preventDefault();
+            document.body.classList.remove('drag-over');
+
+            if (!e.dataTransfer) {
+              return;
+            }
+
+            const files = [];
+
+            for (const item of e.dataTransfer.items) {
+              if (item.kind === 'file') {
+                const file = item.getAsFile();
+
+                if (file) {
+                  files.push(file);
+                }
+              }
+            }
+
+            if (files.length > 1) {
+              throw new Error('Only one file at a time, please!');
+            } else if (files.length === 1) {
+              inputEl.value = '';
+              input = files[0];
+            }
+          } else {
+            // paste event
+            input = e.clipboardData?.getData('text');
+          }
+
+          let resultMsg = '';
+
+          const { raw, fileType } = await BBQr.detectFileType(input);
+
+          resultMsg += `<ul><li>File type: <strong>${fileType}</strong><br></li>`;
+
+          const { parts, version } = await BBQr.splitQRs(raw, fileType);
+
+          const imgBuf = await BBQr.renderQRImage(parts, version);
+
+          resultMsg += `<li>Number of parts: <strong>${parts.length}</strong></li>`;
+
+          resultMsg += `<li>QR code version: <strong>${version}</strong></li></ul>`;
+
+          resultMsg += `<p>Click on the image to save it.</p>`;
+
+          resultContentEl.innerHTML = resultMsg;
+
+          const url = URL.createObjectURL(new Blob([imgBuf], { type: 'image/png' }));
+
+          const imgName = input instanceof File ? input.name + '.png' : 'bbqr.png';
+
+          resultContentEl.innerHTML += `<a class="bbqr" href="${url}" download="${imgName}"><img src="${url}" alt="Rendered BBQr" /></a>`;
+        } catch (err) {
+          errorContentEl.textContent = err.message;
+          resultEl.classList.add('error');
+        } finally {
+          resultEl.classList.remove('busy');
+          busy = false;
+        }
+      }
+
+      document.addEventListener('dragenter', () => {
+        document.body.classList.add('drag-over');
+      });
+
+      document.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        if (!e.relatedTarget) {
+          document.body.classList.remove('drag-over');
+        }
+      });
+
+      document.addEventListener('dragover', (e) => {
+        // prevent browser from opening the file when dropped
+        e.preventDefault();
+      });
+
+      document.addEventListener('drop', handleFileOrTextInput);
+
+      // detect paste in textarea
+      inputEl.addEventListener('paste', handleFileOrTextInput);
+
+      document.addEventListener('click', (e) => {
+        if (e.target !== resultEl) {
+          resultEl.close();
+        }
+      });
+    </script>
+  </body>
+</html>
