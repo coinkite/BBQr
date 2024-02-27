@@ -71,6 +71,7 @@ Created 'example.png' with 8 frames.
 - Joining QRs: [Python](python/bbqr/join.py), [JS](js/src/join.ts)
 - Binary to internal encoding: [Python](python/bbqr/utils.py), [JS](js/src/utils.ts)
 - Wrapper CLI: [Python](python/bbqr/cli.py)
+- [Example of using the JS implementation](https://bbqr.org/js-demo.html)
 
 # License
 
