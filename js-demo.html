@@ -74,7 +74,15 @@
         display: none;
       }
 
+      dialog.error .success {
+        display: none;
+      }
+
       dialog:not(.busy) .busy {
+        display: none;
+      }
+
+      dialog:not(.error) .error {
         display: none;
       }
 
@@ -138,7 +146,15 @@ BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQ::::QQ  rrrrrrr
       <dialog id="result-dialog">
         <article class="success">
           <h2>BBQr created</h2>
-          <div id="result-text">Blah</div>
+          <div id="result-text"></div>
+          <footer>
+            <button>Dismiss</button>
+          </footer>
+        </article>
+
+        <article class="error">
+          <h2>Error!</h2>
+          <div id="error-text"></div>
           <footer>
             <button>Dismiss</button>
           </footer>
@@ -160,6 +176,7 @@ BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQ::::QQ  rrrrrrr
     <script>
       const resultEl = document.querySelector('#result-dialog');
       const resultContentEl = document.querySelector('#result-text');
+      const errorContentEl = document.querySelector('#error-text');
       const inputEl = document.querySelector('#text-input');
 
       function clearPrevious() {
@@ -171,11 +188,13 @@ BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQ::::QQ  rrrrrrr
         });
 
         resultContentEl.innerHTML = '';
+
+        resultEl.classList.remove('error');
       }
 
       let busy = false;
 
-      async function handleFileOrTextInput(input) {
+      async function handleFileOrTextInput(e) {
         if (busy) {
           return;
         }
@@ -186,6 +205,39 @@ BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQ::::QQ  rrrrrrr
 
         try {
           clearPrevious();
+
+          let input;
+
+          if (e instanceof DragEvent) {
+            e.preventDefault();
+            document.body.classList.remove('drag-over');
+
+            if (!e.dataTransfer) {
+              return;
+            }
+
+            const files = [];
+
+            for (const item of e.dataTransfer.items) {
+              if (item.kind === 'file') {
+                const file = item.getAsFile();
+
+                if (file) {
+                  files.push(file);
+                }
+              }
+            }
+
+            if (files.length > 1) {
+              throw new Error('Only one file at a time, please!');
+            } else if (files.length === 1) {
+              inputEl.value = '';
+              input = files[0];
+            }
+          } else {
+            // paste event
+            input = e.clipboardData?.getData('text');
+          }
 
           let resultMsg = '';
 
@@ -210,6 +262,9 @@ BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQ::::QQ  rrrrrrr
           const imgName = input instanceof File ? input.name + '.png' : 'bbqr.png';
 
           resultContentEl.innerHTML += `<a class="bbqr" href="${url}" download="${imgName}"><img src="${url}" alt="Rendered BBQr" /></a>`;
+        } catch (err) {
+          errorContentEl.textContent = err.message;
+          resultEl.classList.add('error');
         } finally {
           resultEl.classList.remove('busy');
           busy = false;
@@ -222,7 +277,6 @@ BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQ::::QQ  rrrrrrr
 
       document.addEventListener('dragleave', (e) => {
         e.preventDefault();
-        console.log('dragleave', e.relatedTarget);
         if (!e.relatedTarget) {
           document.body.classList.remove('drag-over');
         }
@@ -231,45 +285,12 @@ BBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBB        QQQQQQQQ::::QQ  rrrrrrr
       document.addEventListener('dragover', (e) => {
         // prevent browser from opening the file when dropped
         e.preventDefault();
-        // document.body.classList.add('drag-over');
       });
 
-      document.addEventListener('drop', (e) => {
-        e.preventDefault();
-        document.body.classList.remove('drag-over');
-
-        if (!e.dataTransfer) {
-          return;
-        }
-
-        const files = [];
-
-        for (const item of e.dataTransfer.items) {
-          if (item.kind === 'file') {
-            const file = item.getAsFile();
-
-            if (file) {
-              files.push(file);
-            }
-          }
-        }
-
-        if (files.length > 1) {
-          throw new Error('Only one file at a time, please.');
-        } else if (files.length === 1) {
-          inputEl.value = '';
-          handleFileOrTextInput(files[0]);
-        }
-      });
+      document.addEventListener('drop', handleFileOrTextInput);
 
       // detect paste in textarea
-      inputEl.addEventListener('paste', (e) => {
-        const text = e.clipboardData?.getData('text');
-
-        if (text) {
-          handleFileOrTextInput(text);
-        }
-      });
+      inputEl.addEventListener('paste', handleFileOrTextInput);
 
       document.addEventListener('click', (e) => {
         if (e.target !== resultEl) {
