@@ -119,3 +119,4 @@ This library is built with [Vite](https://vitejs.dev).
 - The `index.html` and `demo.ts` files are for local development.
 - Start the Vite dev server: `npm run dev`.
 - Start the Vitest tests in watch mode: `npm run test:watch`
+- Building for production: `npm run build`
