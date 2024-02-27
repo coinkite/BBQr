@@ -1,7 +1,7 @@
 {
   "name": "bbqr",
   "private": false,
-  "version": "0.0.1-next.11",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/coinkite/BBQr.git",
