@@ -130,3 +130,23 @@ cHNidP....
 ### PSBT: 10 in, 2 out with Locktimes
 
 ![tx-10in2out-locktimes](locktimes.png)
+
+## Signing multisig Transaction with COLDCARD Q
+
+1) Navigate to `Scan Any QR Code` and import below 15of15 multisig.
+
+![multisig-15of15](15of15.png)
+
+2) Sign below multisig PSBT
+
+![change_psbt_multisig-15of15](change_psbt_15of15.png)
+
+3) Above should fail because of exotic sighash (NONE). Navigate to
+   `Advanced/Tools -> Danger Zone -> Sighash Checks` and choose to `Warn` only.
+   After this you must be able to sign and COLDCARD presents you with a warning.
+
+```patch
+Only tweak `Sighash Check` setting if you know what you're doing. This
+is very dangerous and not needed for normal operation. Please, enable checks
+to `Default: Block` after this exercise.
+```
