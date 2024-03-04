@@ -238,7 +238,7 @@ Encoding | Meaning
 ---------|-----------------
   H      | HEX (capitalized hex digits, 4-bits each)
   2      | [Base32](https://en.wikipedia.org/wiki/Base32) using [RFC 4648](https://datatracker.ietf.org/doc/html/rfc4648#section-6) alphabet
-  Z      | Zlib compressed (wbits=10, no header) then Base32
+  Z      | Zlib compressed (wbits=-10, no header) then Base32
  (others)| _All other codes are reserved._
 
 Base32 puts 5.0 bits into 5.5 bits of QR data and is closer to
@@ -253,7 +253,7 @@ Mode "Z" involves compressing the binary data and then sending as
 Base32.  Because the target for this data is embedded systems and
 we are trying to save every last byte, the details of the compression
 are fixed: You must use [zlib](https://www.zlib.net/) and provide
-a `wbits` value of 10. No Gzip nor Zlib file header should be
+a `wbits` value of `-10`. No Gzip nor Zlib file header should be
 included, and they are not needed since the `wbits` value is fixed.
 The compression level should typically be set to maximum
 compression effort (9) but the fixed `wbits` value limits this
@@ -273,7 +273,7 @@ UTXO, etc) so zlib compression does not always help. You should
 fall back to Base32 encoding rather than send a QR that is larger
 than needed.
 
-Here are some compression numbers, using `wbits=10` as required
+Here are some compression numbers, using `wbits=-10` as required
 (all bytes here, no encoding).
 
 File (see testing/data) | Before | After | Compression Ratio
