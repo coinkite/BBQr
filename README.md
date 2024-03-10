@@ -149,7 +149,7 @@ cHNidP....
 
 ![tx-10in2out-locktimes](locktimes.png)
 
-## Signing multisig Transaction with COLDCARD Q
+## Multisig
 
 1) Navigate to `Scan Any QR Code` and import below 15of15 multisig.
 
@@ -168,3 +168,25 @@ Only tweak `Sighash Check` setting if you know what you're doing. This
 is very dangerous and not needed for normal operation. Please, enable checks
 to `Default: Block` after this exercise.
 ```
+
+## Miniscript and MiniTapscript
+
+```patch
+requires EDGE firmware 6.3.3QX or later
+```
+
+1) Import CSA threshold Tapscript multisig with static provably unspendable internal key:
+
+![tapscript_threshold](minisc.png)
+
+2) Sign PSBT:
+
+![tapscript_threshold_psbt](minisc_psbt.png)
+
+1) import MiniTapScript with ranged probably unspendable internal key:
+
+![minitapscript](minitapscript.png)
+
+2) Sign PSBT
+
+![minitapscript_psbt](minitapscript_psbt.png)
