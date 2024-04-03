@@ -65,6 +65,15 @@ Building QR images... done!
 Created 'example.png' with 8 frames.
 ```
 
+# Supporting Projects
+
+Name                | Display |  Scan   |
+--------------------|:-------:|:-------:|
+COLDCARD Q          |    Y    |    Y    |
+COLDCARD Mk4        |    Y    |    N    |
+Sparrow Wallet      |    Y    |    Y    |
+Nunchuk             |    Y    |    Y    |
+
 # Code Examples
 
 - Splitting QRs: [Python](python/bbqr/split.py), [JS](js/src/split.ts)
