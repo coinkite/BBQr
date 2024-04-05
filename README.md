@@ -73,6 +73,7 @@ COLDCARD Q          |    Y    |    Y    |
 COLDCARD Mk4        |    Y    |    N    |
 Sparrow Wallet      |    Y    |    Y    |
 Nunchuk             |    Y    |    Y    |
+BTCPay Server       |    Y    |    Y    |
 
 # Code Examples
 
