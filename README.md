@@ -5,7 +5,10 @@ Encodes larger files into a series of QR codes so they can cross air gaps.
 
 Project Status: **New & proposed --- looking for feedback**
 
-[Project Home on Github](https://github.com/coinkite/BBQr)
+Quick links:
+
+- [Project Home on Github](https://github.com/coinkite/BBQr)
+- [Browser-based BBQr tool](https://bbqr.org/js-demo.html) - encode PSBTs and other data into the BBQr format.
 
 # Specification
 
