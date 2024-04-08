@@ -5,7 +5,10 @@ Encodes larger files into a series of QR codes so they can cross air gaps.
 
 Project Status: **New & proposed --- looking for feedback**
 
-[Project Home on Github](https://github.com/coinkite/BBQr)
+Quick links:
+
+- [Project Home on Github](https://github.com/coinkite/BBQr)
+- [Browser-based BBQr tool](https://bbqr.org/js-demo) - encode PSBTs and other data into the BBQr format.
 
 # Specification
 
@@ -81,7 +84,7 @@ BTCPay Server       |    Y    |    Y    |
 - Joining QRs: [Python](python/bbqr/join.py), [JS](js/src/join.ts)
 - Binary to internal encoding: [Python](python/bbqr/utils.py), [JS](js/src/utils.ts)
 - Wrapper CLI: [Python](python/bbqr/cli.py)
-- [Example of using the JS implementation](https://bbqr.org/js-demo.html)
+- [Example of using the JS implementation](https://bbqr.org/js-demo)
 
 # License
 
