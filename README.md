@@ -8,7 +8,8 @@ Project Status: **New & proposed --- looking for feedback**
 Quick links:
 
 - [Project Home on Github](https://github.com/coinkite/BBQr)
-- [Browser-based BBQr tool](https://bbqr.org/js-demo) - encode PSBTs and other data into the BBQr format.
+- [Browser-based JavaScript BBQr tool](https://bbqr.org/js-demo) - encode PSBTs and other data into the BBQr format.
+- [BBQr Rust implementation](https://github.com/satoshiportal/bbqr-rust)
 
 # Specification
 
