@@ -78,6 +78,7 @@ COLDCARD Mk4        |    Y    |    N    |
 Sparrow Wallet      |    Y    |    Y    |
 Nunchuk             |    Y    |    Y    |
 BTCPay Server       |    Y    |    Y    |
+Krux                |    Y    |    Y    |
 
 # Code Examples
 
