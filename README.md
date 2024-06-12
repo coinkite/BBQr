@@ -11,6 +11,7 @@ Quick links:
 - [Browser-based JavaScript BBQr tool](https://bbqr.org/js-demo) - encode PSBTs and other data into the BBQr format.
 - [BBQr Rust implementation](https://github.com/satoshiportal/bbqr-rust)
 - [Dart language bindings for BBQr-rust](https://github.com/SatoshiPortal/bbqr-dart)
+- [iOS/MacOS and Android bindings for BBQr library using uniFFI](https://github.com/bitcoinppl/bbqr-ffi)
 
 # Specification
 
