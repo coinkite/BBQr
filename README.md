@@ -148,7 +148,7 @@ cHNidP....
 
 ![tx-10in2out-locktimes](locktimes.png)
 
-## Signing multisig Transaction with COLDCARD Q
+## Multisig
 
 1) Navigate to `Scan Any QR Code` and import below 15of15 multisig.
 
@@ -167,3 +167,26 @@ Only tweak `Sighash Check` setting if you know what you're doing. This
 is very dangerous and not needed for normal operation. Please, enable checks
 to `Default: Block` after this exercise.
 ```
+
+## Miniscript and MiniTapscript
+
+```patch
+edQe is currently only for BETA testers without proper release. If you want
+to join BETA testing phase contact us at support@coinkite.com
+```
+
+1) Import CSA threshold Tapscript multisig with provably unspendable internal key (allows you to disclose just M keys when signing):
+
+![tapscript_threshold](minisc.png)
+
+2) Sign PSBT:
+
+![tapscript_threshold_psbt](minisc_psbt.png)
+
+1) import MiniTapScript:
+
+![minitapscript](minitapscript.png)
+
+2) Sign PSBT. As taproot internal key is ours, Q produced signed tx ready for broadcast.
+
+![minitapscript_psbt](minitapscript_psbt.png)
