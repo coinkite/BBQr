@@ -81,6 +81,7 @@ Sparrow Wallet      |    Y    |    Y    |
 Nunchuk             |    Y    |    Y    |
 BTCPay Server       |    Y    |    Y    |
 Krux                |    Y    |    Y    |
+LabelBase           |    Y    |    Y    |
 
 # Code Examples
 
