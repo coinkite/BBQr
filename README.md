@@ -82,6 +82,7 @@ Nunchuk             |    Y    |    Y    |
 BTCPay Server       |    Y    |    Y    |
 Krux                |    Y    |    Y    |
 LabelBase           |    Y    |    Y    |
+FullyNoded          |    Y    |    Y    |
 
 # Code Examples
 
