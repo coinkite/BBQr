@@ -124,6 +124,12 @@ cHNidP....
 
 ```
 
+Dumping BBQr to console:
+```
+# needs a very low version or cinema screen
+bbqr make UNLICENSE.md -o stdout -v 5
+```
+
 ## Signing Transaction with COLDCARD Q
 
 1) Using **COLDCARD Q** choose `Scan Any QR Code` from main menu and scan this Seed QR
