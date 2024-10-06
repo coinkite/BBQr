@@ -8,6 +8,8 @@
 #
 
 from setuptools import setup
+from bbqr.version import __version__
+
 
 requirements = [
     'pyqrcode',

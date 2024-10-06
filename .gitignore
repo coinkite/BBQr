@@ -5,3 +5,6 @@ __pycache__
 foo.png
 foo*.svg
 .DS_Store
+.idea
+build
+dist
