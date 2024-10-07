@@ -10,10 +10,8 @@
 #       05                  2-digits of HEX: total number of QR codes
 #       00                  2-digits of HEX: which QR code this is in the sequence
 #
-import pyqrcode, zlib
-from math import ceil, floor
-from base64 import b32encode, b32decode
-from .utils import version_to_chars, encode_data, decode_data, int2base36
+from math import ceil
+from .utils import version_to_chars, encode_data, int2base36
 from .consts import HEADER_LEN, KNOWN_FILETYPES
 
 def num_qr_needed(ver, ll, split_mod):

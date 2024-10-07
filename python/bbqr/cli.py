@@ -6,8 +6,6 @@
 #
 #
 import click, sys, os, pdb, io, random
-from pprint import pformat
-from functools import wraps
 from bbqr import split_qrs, join_qrs
 from bbqr.consts import FILETYPE_NAMES, KNOWN_FILETYPES
 
@@ -162,21 +160,29 @@ def make_qrs(randomize_order, infile=None, outfile=None, encoding=None, scale=4,
     if not outfile or outfile == '-':
         for p in parts:
             print(p)
+            print()
         return 0
 
-    rootpath, ext = os.path.splitext(outfile)
-    ext = ext.lower()[1:]
+    if outfile != "text":
+        rootpath, ext = os.path.splitext(outfile)
+        ext = ext.lower()[1:]
 
-    if ext not in {'png', 'svg', 'gif'}:
-        print(f"Unsupported output file type: {ext}")
-        return 1
+        if ext not in {'png', 'svg', 'gif'}:
+            print(f"Unsupported output file type: {ext}")
+            return 1
 
+    import pyqrcode
     # Render graphics -- very slow!
-    import pyqrcode 
     print("Building QR images... ", file=sys.stderr, end='', flush=True)
     qs = [pyqrcode.create(data, error='L', version=vers, mode='alphanumeric') for
             data in parts]
     print("done!", file=sys.stderr)
+
+    if outfile == "stdout":
+        for q in qs:
+            print(q.terminal())
+            print("\n\n")
+        return 0
 
     if ext == 'svg':
         # limitation: doesn't include progress bar animation
