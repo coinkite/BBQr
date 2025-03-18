@@ -3,7 +3,7 @@
 
 Encodes larger files into a series of QR codes so they can cross air gaps.
 
-Project Status: **New & proposed --- looking for feedback**
+Project Status: **Deployed Widely**
 
 Quick links:
 

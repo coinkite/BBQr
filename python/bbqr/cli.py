@@ -80,8 +80,8 @@ def decode_bbqr(raw):
         from binascii import b2a_hex
         print(b2a_hex(data))
 
-    elif file_type in 'XB':
-        print(f"{len(data)} bytes of Binary data... (not shown)", file=sys.stderr)
+    elif file_type in 'XBRSE':
+        print(f"{FILETYPE_NAMES[file_type]}: {len(data)} bytes of binary data (not shown)", file=sys.stderr)
 
     elif file_type == 'C':
         print(f"{len(data)} bytes of raw CBOR data... (not shown)", file=sys.stderr)

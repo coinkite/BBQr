@@ -10,7 +10,8 @@ HEADER_LEN = 8
 
 # Human names
 FILETYPE_NAMES = dict(P='PSBT', T='Transaction', J='JSON', C='CBOR', U='Unicode Text',
-                        X='Executable', B='Binary')
+                        X='Executable', B='Binary',
+                        R='KT Rx', S='KT Tx', E='KT PSBT')
 
 # Codes for PSBT vs. TXN and so on
 KNOWN_FILETYPES = set(FILETYPE_NAMES.keys())
