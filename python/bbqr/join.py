@@ -21,7 +21,6 @@ def join_qrs(parts):
 
     assert num_parts >= 1, 'zero parts?'
     assert encoding in 'H2Z', f'bad encoding: {encoding}'
-    assert file_type in KNOWN_FILETYPES, f'unknown file type: {file_type}'
 
     # ok to have dups here, just need them all
     data = {}
