@@ -4,8 +4,8 @@
  * QR code decoding/joining.
  */
 
-import { ENCODINGS, FILETYPES } from './consts';
-import { Encoding, FileType, JoinResult } from './types';
+import { ENCODINGS } from './consts';
+import { Encoding, JoinResult } from './types';
 import { decodeData } from './utils';
 
 /**
@@ -30,12 +30,13 @@ export function joinQRs(parts: string[]): JoinResult {
   if (!ENCODINGS.has(header[2])) {
     throw new Error(`bad encoding: ${header[2]}`);
   }
-  if (!FILETYPES.has(header[3])) {
-    throw new Error(`bad file type: ${header[3]}`);
-  }
 
   const encoding = header[2] as Encoding;
-  const fileType = header[3] as FileType;
+  const fileType = header[3];
+
+  if (!/^[A-Z]$/.test(fileType)) {
+    throw new Error('fileType must be a single uppercase letter');
+  }
 
   const numParts = parseInt(header.slice(4, 6), 36);
 
