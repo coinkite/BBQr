@@ -14,6 +14,9 @@ export const FILETYPE_NAMES = {
   U: 'Unicode Text',
   X: 'Executable',
   B: 'Binary',
+  R: 'KT Rx',
+  S: 'KT Tx',
+  E: 'KT PSBT',
 } as const;
 
 export const FILETYPES = new Set(Object.keys(FILETYPE_NAMES));
