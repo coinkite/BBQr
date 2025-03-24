@@ -19,8 +19,6 @@ export const FILETYPE_NAMES = {
   E: 'KT PSBT',
 } as const;
 
-export const FILETYPES = new Set(Object.keys(FILETYPE_NAMES));
-
 export const ENCODING_NAMES = {
   H: 'HEX',
   Z: 'Zlib compressed',

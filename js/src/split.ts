@@ -4,7 +4,7 @@
  * Splitting of data and encoding as BBQr QR codes.
  */
 
-import { FILETYPES, HEADER_LEN } from './consts';
+import { HEADER_LEN } from './consts';
 import { FileType, SplitOptions, SplitResult, Version } from './types';
 import {
   base64ToBytes,
@@ -82,11 +82,11 @@ function findBestVersion(length: number, splitMod: number, opts: Required<SplitO
  */
 export function splitQRs(
   raw: Uint8Array,
-  fileType: FileType,
+  fileType: string,
   opts: SplitOptions = {}
 ): SplitResult {
-  if (!FILETYPES.has(fileType)) {
-    throw new Error(`Invalid value for fileType: ${fileType}`);
+  if (!/^[A-Z]$/.test(fileType)) {
+    throw new Error('fileType must be a single uppercase letter A-Z');
   }
 
   const validatedOpts = validateSplitOptions(opts);

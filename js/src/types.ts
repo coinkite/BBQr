@@ -25,7 +25,7 @@ export type SplitResult = {
 };
 
 export type JoinResult = {
-  fileType: FileType;
+  fileType: string;
   encoding: Encoding;
   raw: Uint8Array;
 };
