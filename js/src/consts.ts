@@ -27,6 +27,12 @@ export const ENCODING_NAMES = {
 
 export const ENCODINGS = new Set(Object.keys(ENCODING_NAMES));
 
+export const ENCODING_SPLIT_MOD = {
+  H: 2,
+  Z: 8,
+  '2': 8,
+} as const;
+
 // taken from: https://github.com/mnooner256/pyqrcode/blob/674a77b5eaf850d063f518bd90c243ee34ad6b5d/pyqrcode/tables.py#L84
 export const QR_DATA_CAPACITY = {
   1: {
