@@ -8,6 +8,7 @@ import { renderQRImage } from './image.ts';
 import { joinQRs } from './join.ts';
 import { detectFileType, splitQRs } from './split.ts';
 
+export * from './types';
 export { detectFileType, joinQRs, renderQRImage, splitQRs };
 
 // EOF

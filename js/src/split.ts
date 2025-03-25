@@ -4,8 +4,8 @@
  * Splitting of data and encoding as BBQr QR codes.
  */
 
-import { HEADER_LEN } from './consts';
-import { FileType, SplitOptions, SplitResult, Version } from './types';
+import { ENCODING_SPLIT_MOD, HEADER_LEN } from './consts';
+import { Encoding, FileType, SplitOptions, SplitResult, Version } from './types';
 import {
   base64ToBytes,
   encodeData,
@@ -17,7 +17,9 @@ import {
   versionToChars,
 } from './utils';
 
-function numQRNeeded(version: Version, length: number, splitMod: number) {
+function numQRNeeded(version: Version, length: number, encoding: Encoding) {
+  const splitMod = ENCODING_SPLIT_MOD[encoding];
+
   const baseCap = versionToChars(version) - HEADER_LEN;
 
   // adjust capacity to be a multiple of splitMod
@@ -40,11 +42,11 @@ function numQRNeeded(version: Version, length: number, splitMod: number) {
   };
 }
 
-function findBestVersion(length: number, splitMod: number, opts: Required<SplitOptions>) {
+function findBestVersion(length: number, opts: Required<SplitOptions>) {
   const options: { version: Version; count: number; perEach: number }[] = [];
 
   for (let version = opts.minVersion; version <= opts.maxVersion; version++) {
-    const { count, perEach } = numQRNeeded(version, length, splitMod);
+    const { count, perEach } = numQRNeeded(version, length, opts.encoding);
 
     if (opts.minSplit <= count && count <= opts.maxSplit) {
       options.push({ version, count, perEach });
@@ -65,18 +67,12 @@ function findBestVersion(length: number, splitMod: number, opts: Required<SplitO
  * Converts the input bytes into a series of QR codes, ensuring that the most efficient QR code
  * version is used.
  *
- * NOTE: When the 'Z' (Zlib) encoding is selected, it is possible that the actual used encoding
+ * NOTE: When the default 'Z' (Zlib) encoding is selected, it is possible that the actual used encoding
  * will be '2' (Base32) in case Zlib compression does not reduce the size of the output.
  *
  * @param raw The input bytes to split and encode.
  * @param fileType The file type to use. Refer to BBQr spec.
- *
  * @param opts An optional SplitOptions object.
- * @param opts.encoding The Encoding to use. Defaults to 'Z'.
- * @param opts.minSplit The minimum number of QR codes to use. Defaults to 1.
- * @param opts.maxSplit The maximum number of QR codes to use. Defaults to 1295.
- * @param opts.minVersion The minimum QR code version to use. Defaults to 5.
- * @param opts.maxVersion The maximum QR code version to use. Defaults to 40.
  *
  * @returns An object containing the version of the QR codes, their string parts, and the actual encoding used.
  */
@@ -91,9 +87,9 @@ export function splitQRs(
 
   const validatedOpts = validateSplitOptions(opts);
 
-  const { encoding: actualEncoding, encoded, splitMod } = encodeData(raw, validatedOpts.encoding);
+  const { encoding: actualEncoding, encoded } = encodeData(raw, validatedOpts.encoding);
 
-  const { version, count, perEach } = findBestVersion(encoded.length, splitMod, validatedOpts);
+  const { version, count, perEach } = findBestVersion(encoded.length, validatedOpts);
 
   const parts: string[] = [];
 

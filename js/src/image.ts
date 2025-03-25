@@ -15,8 +15,6 @@ import { shuffled } from './utils';
  * @param parts The string parts to encode as QR codes.
  * @param version The QR code version to use.
  * @param options An optional ImageOptions object.
- * @param options.frameDelay The delay between frames in the animated PNG in milliseconds. Defaults to 250.
- * @param options.randomizeOrder Whether to randomize the order of the parts. Defaults to false.
  * @returns A Promise that resolves to an ArrayBuffer containing the image data;
  */
 export async function renderQRImage(
@@ -25,25 +23,22 @@ export async function renderQRImage(
   options: ImageOptions = {}
 ): Promise<ArrayBuffer> {
   if (typeof window === 'undefined') {
-    throw new Error('makeImage is only available in a web browser environment.');
+    throw new Error('renderQRImage is only available in a web browser environment.');
   }
 
-  const frameDelay = options.frameDelay ?? 250;
+  const mode = options.mode ?? 'animated';
 
-  if (options.randomizeOrder) {
-    parts = shuffled(parts);
+  const margin = 4;
+  const scale = options.scale ?? 4;
+
+  if (scale < 1) {
+    throw new Error('scale cannot be less than 1');
   }
-
-  const frames: ArrayBuffer[] = [];
 
   let width = 0;
   let height = 0;
 
-  // additional space for progress bar, if more than one part
-  const progressAreaHeight = parts.length > 1 ? 20 : 0;
-
-  // quiet zone
-  const margin = 4;
+  const qrImages: HTMLImageElement[] = [];
 
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
@@ -52,12 +47,27 @@ export async function renderQRImage(
       errorCorrectionLevel: 'L',
       version,
       margin,
+      scale,
     });
 
     // Create an image and draw it onto the canvas to get its dimensions
     const img = new Image();
     img.src = dataURL;
     await img.decode();
+
+    if (i === 0) {
+      width = img.width;
+      height = img.height;
+    } else if (img.width !== width) {
+      throw new Error('QR codes must all be the same size');
+    }
+
+    qrImages.push(img);
+  }
+
+  if (mode === 'stacked') {
+    const spacing = width / 1.5;
+    const totalHeight = height * parts.length + spacing * (parts.length - 1);
 
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -66,42 +76,94 @@ export async function renderQRImage(
       throw new Error('Could not get 2d context for canvas element.');
     }
 
-    canvas.width = img.width;
-    canvas.height = img.height + progressAreaHeight;
+    canvas.width = width;
+    canvas.height = totalHeight;
 
-    ctx.drawImage(img, 0, 0);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, width, totalHeight);
 
-    if (progressAreaHeight > 0) {
-      // fill area between QR and progress bar
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, img.height, canvas.width, progressAreaHeight);
+    for (let i = 0; i < qrImages.length; i++) {
+      const y = i * (height + spacing);
+      ctx.drawImage(qrImages[i], 0, y);
 
-      const progressBarHeight = progressAreaHeight / 4;
-      const progressBarY = img.height + progressAreaHeight / 2; // Position the progress bar below the QR code
-      const segmentWidth = canvas.width / parts.length;
+      // Draw down arrow between QR codes (except after the last one)
+      if (i < qrImages.length - 1) {
+        const arrowY = y + height + spacing / 2;
+        const arrowSize = width / 6;
+        const arrowWidth = arrowSize * 2;
+        const centerX = width / 2;
 
-      ctx.fillStyle = '#ccc';
-      ctx.fillRect(0, progressBarY, canvas.width, progressBarHeight);
-
-      ctx.fillStyle = '#000';
-
-      ctx.fillRect(segmentWidth * i, progressBarY, segmentWidth, progressBarHeight);
+        // Draw arrow with low opacity
+        ctx.save();
+        ctx.globalAlpha = 0.05;
+        ctx.beginPath();
+        ctx.moveTo(centerX, arrowY + arrowSize / 2);
+        ctx.lineTo(centerX + arrowWidth / 2, arrowY - arrowSize / 2);
+        ctx.lineTo(centerX - arrowWidth / 2, arrowY - arrowSize / 2);
+        ctx.closePath();
+        ctx.fillStyle = '#000';
+        ctx.fill();
+        ctx.restore();
+      }
     }
 
-    if (i === 0) {
-      width = canvas.width;
-      height = canvas.height;
-    } else if (canvas.width !== width || canvas.height !== height) {
-      throw new Error('QR codes must all be the same size');
+    const imgData = ctx.getImageData(0, 0, width, totalHeight).data;
+    return UPNG.encode([imgData.buffer], width, totalHeight, 0);
+  } else {
+    const progressAreaHeight = parts.length > 1 ? 2 * scale : 0;
+
+    const frames: ArrayBuffer[] = [];
+
+    for (let i = 0; i < qrImages.length; i++) {
+      if (i === 0) {
+        height += progressAreaHeight;
+      }
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        throw new Error('Could not get 2d context for canvas element.');
+      }
+
+      const img = qrImages[i];
+
+      canvas.width = img.width;
+      canvas.height = img.height + progressAreaHeight;
+
+      ctx.drawImage(img, 0, 0);
+
+      if (progressAreaHeight > 0) {
+        // fill area between QR and progress bar
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, img.height, canvas.width, progressAreaHeight);
+
+        // leave margin on sides of progress bar, so it's same width as the actual QR code
+        const marginPixels = margin * scale;
+
+        // but also a little bit of white space below the progress bar
+        const progressBarHeight = progressAreaHeight / 2;
+
+        const segmentWidth = (canvas.width - 2 * marginPixels) / parts.length;
+
+        ctx.fillStyle = '#ccc';
+        ctx.fillRect(marginPixels, img.height, canvas.width - 2 * marginPixels, progressBarHeight);
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(marginPixels + segmentWidth * i, img.height, segmentWidth, progressBarHeight);
+      }
+      const imgData = ctx.getImageData(0, 0, width, canvas.height).data;
+      frames.push(imgData.buffer);
     }
 
-    const imgData = ctx.getImageData(0, 0, width, height).data;
-    frames.push(imgData.buffer);
+    return UPNG.encode(
+      options.randomizeOrder ? shuffled(frames) : frames,
+      width,
+      height,
+      0,
+      parts.map(() => options.frameDelay ?? 250)
+    );
   }
-
-  const delays = parts.map(() => frameDelay);
-
-  return UPNG.encode(frames, width, height, 0, delays);
 }
 
 // EOF

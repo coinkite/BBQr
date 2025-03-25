@@ -171,7 +171,6 @@ export function encodeData(raw: Uint8Array, encoding?: Encoding) {
       encoded: raw
         .reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '')
         .toUpperCase(),
-      splitMod: 2,
     };
   }
 
@@ -192,7 +191,6 @@ export function encodeData(raw: Uint8Array, encoding?: Encoding) {
     encoding,
     // base32 without padding
     encoded: base32.encode(raw).replace(/=*$/, ''),
-    splitMod: 8,
   };
 }
 
