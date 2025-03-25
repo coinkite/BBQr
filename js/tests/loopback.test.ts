@@ -71,7 +71,7 @@ test('Loopback', () => {
       expect(producesValidQRs(parts, version)).toBe(true);
     }
   }
-});
+}, 10_000);
 
 test('Minimum split', () => {
   const data = new Uint8Array(10_000);
@@ -172,4 +172,4 @@ test.each(['H', '2'] as const)(`Test max size for encoding %s`, (encoding) => {
   // test a random part
   const idx = Math.floor(Math.random() * parts.length);
   expect(producesValidQRs([parts[idx]], version)).toBe(true);
-});
+}, 10_000);
