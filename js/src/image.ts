@@ -6,6 +6,7 @@
 
 import QRCode from 'qrcode';
 import UPNG from 'upng-js';
+import { QR_SIZE } from './consts';
 import { ImageOptions, Version } from './types';
 import { shuffled } from './utils';
 
@@ -28,7 +29,23 @@ export async function renderQRImage(
 
   const mode = options.mode ?? 'animated';
 
-  const margin = 4;
+  let margin = 4;
+
+  if (typeof options.margin === 'number' && options.margin >= 0) {
+    margin = options.margin;
+  } else if (typeof options.margin === 'string' && /^\d+(\.\d+)?%$/.test(options.margin)) {
+    // string like '10%' or '5.5%'
+    const percent = Number(options.margin.slice(0, -1));
+    margin = (QR_SIZE[version] * percent) / 100;
+  } else if (options.margin !== undefined) {
+    throw new Error(
+      'Invalid margin value. Expected a non-negative number or percentage string like "10%". Got: ' +
+        options.margin
+    );
+  }
+
+  margin = Math.round(margin);
+
   const scale = options.scale ?? 4;
 
   if (scale < 1) {
