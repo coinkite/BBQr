@@ -78,6 +78,13 @@ export type ImageOptions = {
    * @default 4
    */
   scale?: number;
+  /**
+   * The margin or "quiet zone" around the QR code.
+   * Numeric values are interpreted as number of modules.
+   * Percentage values like `10%` are interpreted as a percentage of the QR code size.
+   * @default 4
+   */
+  margin?: number | `${number}%`;
 };
 
 // EOF
