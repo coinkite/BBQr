@@ -73,16 +73,21 @@ Created 'example.png' with 8 frames.
 
 # Supporting Projects
 
-Name                | Display |  Scan   |
---------------------|:-------:|:-------:|
-COLDCARD Q          |    Y    |    Y    |
-COLDCARD Mk4        |    Y    |    N    |
-Sparrow Wallet      |    Y    |    Y    |
-Nunchuk             |    Y    |    Y    |
-BTCPay Server       |    Y    |    Y    |
-Krux                |    Y    |    Y    |
-LabelBase           |    Y    |    Y    |
-FullyNoded          |    Y    |    Y    |
+Here’s the markdown version of the updated table you asked for:
+
+| Name                  | Display | Scan | Link                                                                 |
+|-----------------------|:-------:|:----:|----------------------------------------------------------------------|
+| COLDCARD Q            | Y       | Y    | [Coldcard Q (Coinkite)](https://coldcard.com)                        |
+| COLDCARD Mk4          | Y       | N    | [Coldcard Mk4 (Coinkite)](https://coldcard.com)                      |
+| Sparrow Wallet        | Y       | Y    | [Sparrow Wallet](https://sparrowwallet.com)                          |
+| Nunchuk               | Y       | Y    | [Nunchuk Wallet](https://nunchuk.app)                                |
+| BTCPay Server         | Y       | Y    | [BTCPay Server](https://btcpayserver.org)                            |
+| Krux                  | Y       | Y    | [Krux Firmware](https://github.com/krux-wallet)                      |
+| LabelBase             | Y       | Y    | [Labelbase](https://labelbase.org)                                   |
+| FullyNoded            | Y       | Y    | [Fully Noded](https://fullynoded.app)                                |
+| Trident AnchorWatch   | Y       | Y    | [Trident Vault / AnchorWatch](https://anchorwatch.com)               |
+| Cove Wallet           | Y       | Y    | [Cove Wallet](https://github.com/bitcoinppl/cove)                    |
+| BullBitcoin Wallet    | Y       | Y    | [BULL Wallet (Bull Bitcoin)](https://bullbitcoin.com/blog/bull-by-bull-bitcoin) |
 
 # Code Examples
 
