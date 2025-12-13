@@ -88,6 +88,7 @@ Here’s the markdown version of the updated table you asked for:
 | Trident AnchorWatch   | Y       | Y    | [Trident Vault / AnchorWatch](https://anchorwatch.com)               |
 | Cove Wallet           | Y       | Y    | [Cove Wallet](https://github.com/bitcoinppl/cove)                    |
 | BullBitcoin Wallet    | Y       | Y    | [BULL Wallet (Bull Bitcoin)](https://bullbitcoin.com/blog/bull-by-bull-bitcoin) |
+| Bitcoin-Safe          | Y       | Y    | [Bitcoin-Safe (Desktop Wallet)](https://bitcoin-safe.org/en/features/readme/#comprehensive-feature-list) |
 
 # Code Examples
 
