@@ -8,6 +8,9 @@
 # Standard defines a fixed-length header
 HEADER_LEN = 8
 
+# Default cap on decoded/decompressed transfer size (overridable per call)
+MAX_SIZE = 16 * 1024 * 1024
+
 # Human names
 FILETYPE_NAMES = dict(P='PSBT', T='Transaction', J='JSON', C='CBOR', U='Unicode Text',
                         X='Executable', B='Binary',
