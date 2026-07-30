@@ -4,17 +4,32 @@
  * QR code decoding/joining.
  */
 
-import { ENCODINGS } from './consts';
+import { DEFAULT_MAX_SIZE, ENCODINGS, HEADER_LEN } from './consts';
 import { Encoding, JoinResult } from './types';
 import { decodeData } from './utils';
+
+// strict header grammar: B$ magic, known encoding, one uppercase letter of
+// file type, then uppercase base-36 digits for part count and index
+const HEADER_RE = /^B\$[H2Z][A-Z][0-9A-Z]{2}[0-9A-Z]{2}$/;
 
 /**
  * Decodes and joins QR code parts back to binary data.
  *
  * @param parts Array of QR code parts
+ * @param maxSize Cap on decoded/decompressed transfer size in bytes.
  * @returns Object containing the file type, encoding, and raw binary data.
  */
-export function joinQRs(parts: string[]): JoinResult {
+export function joinQRs(parts: string[], maxSize = DEFAULT_MAX_SIZE): JoinResult {
+  for (const p of parts) {
+    if (!HEADER_RE.test(p.slice(0, HEADER_LEN))) {
+      throw new Error(`invalid header: ${p.slice(0, HEADER_LEN)}`);
+    }
+
+    if (p.length === HEADER_LEN) {
+      throw new Error('empty body');
+    }
+  }
+
   const headers = new Set(parts.map((p) => p.slice(0, 6)));
 
   if (headers.size !== 1) {
@@ -45,6 +60,7 @@ export function joinQRs(parts: string[]): JoinResult {
   }
 
   const data = new Map<number, string>();
+  let bodyLen: number | null = null;
 
   for (const p of parts) {
     const idx = parseInt(p.slice(6, 8), 36);
@@ -58,6 +74,15 @@ export function joinQRs(parts: string[]): JoinResult {
     }
 
     data.set(idx, p.slice(8));
+
+    if (idx !== numParts - 1) {
+      // all non-final bodies must share one length
+      bodyLen = bodyLen ?? p.length - HEADER_LEN;
+
+      if (p.length - HEADER_LEN !== bodyLen) {
+        throw new Error('non-final parts must have equal length');
+      }
+    }
   }
 
   const orderedParts = [];
@@ -72,7 +97,16 @@ export function joinQRs(parts: string[]): JoinResult {
     orderedParts.push(p);
   }
 
-  const raw = decodeData(orderedParts, encoding);
+  if (numParts > 1 && orderedParts[numParts - 1].length > bodyLen!) {
+    // final body must be no longer than the others
+    throw new Error('final part too long');
+  }
+
+  const raw = decodeData(orderedParts, encoding, maxSize);
+
+  if (!raw.length) {
+    throw new Error('empty transfer');
+  }
 
   return { fileType, encoding, raw };
 }

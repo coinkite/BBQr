@@ -9,6 +9,9 @@ import { Version } from './types';
 // Fixed-length header
 export const HEADER_LEN = 8;
 
+// Default cap on decoded/decompressed transfer size (overridable per call)
+export const DEFAULT_MAX_SIZE = 16 * 1024 * 1024;
+
 export const FILETYPE_NAMES = {
   P: 'PSBT',
   T: 'Transaction',

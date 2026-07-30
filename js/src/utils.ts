@@ -6,8 +6,10 @@
 
 import { base32 } from '@scure/base';
 import pako from 'pako';
-import { QR_DATA_CAPACITY } from './consts';
+import { DEFAULT_MAX_SIZE, QR_DATA_CAPACITY } from './consts';
 import type { Encoding, SplitOptions, Version } from './types';
+
+const HEX_RE = /^[0-9A-F]*$/;
 
 export function hexToBytes(hex: string) {
   // convert a hex string to a Uint8Array
@@ -194,23 +196,89 @@ export function encodeData(raw: Uint8Array, encoding?: Encoding) {
   };
 }
 
-export function decodeData(parts: string[], encoding: Encoding) {
+export function decodeData(parts: string[], encoding: Encoding, maxSize = DEFAULT_MAX_SIZE) {
   // decode the parts back into a Uint8Array
 
+  // NaN would compare false against every length and disable the caps
+  if (!Number.isSafeInteger(maxSize) || maxSize <= 0) {
+    throw new RangeError('maxSize must be a positive safe integer');
+  }
+
   if (encoding === 'H') {
-    return joinByteParts(parts.map((p) => hexToBytes(p)));
+    const raw = joinByteParts(
+      parts.map((p) => {
+        if (p.length % 2 || !HEX_RE.test(p)) {
+          throw new Error('non-canonical hex body');
+        }
+
+        return hexToBytes(p);
+      })
+    );
+
+    if (raw.length > maxSize) {
+      throw new Error('decoded data too large');
+    }
+
+    return raw;
   }
 
   const bytes = joinByteParts(
-    parts.map((p) => {
+    parts.map((p, i) => {
+      if (i < parts.length - 1 && p.length % 8) {
+        throw new Error('non-final Base32 body length must be a multiple of 8');
+      }
+
       const padding = (8 - (p.length % 8)) % 8;
 
       return base32.decode(p + '='.repeat(padding));
     })
   );
 
+  if (bytes.length > maxSize) {
+    throw new Error('decoded data too large');
+  }
+
   if (encoding === 'Z') {
-    return pako.inflate(bytes, { windowBits: -10 });
+    // small output chunks let the size cap apply while inflating, instead of
+    // after the full output has been buffered
+    const inflator = new pako.Inflate({ windowBits: -10, chunkSize: 1024 });
+
+    // pako ships zlib's strict distance check but leaves dmax at 32768 for
+    // raw streams; pin it to the 1k window so distance >1024 is rejected
+    // exactly (boundary-tested so a pako upgrade cannot silently break this)
+    (inflator as any).strm.state.dmax = 1024;
+
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+
+    inflator.onData = (data) => {
+      const chunk = data as Uint8Array;
+      total += chunk.length;
+
+      if (total > maxSize) {
+        throw new Error('decompressed data too large');
+      }
+
+      chunks.push(chunk);
+    };
+
+    inflator.push(bytes, true);
+
+    if (inflator.err) {
+      throw new Error(`invalid DEFLATE stream: ${inflator.msg}`);
+    }
+
+    const { ended, strm } = inflator as any;
+
+    if (!ended) {
+      throw new Error('incomplete DEFLATE stream');
+    }
+
+    if (strm.avail_in) {
+      throw new Error('trailing data after DEFLATE stream');
+    }
+
+    return joinByteParts(chunks);
   }
 
   return bytes;
